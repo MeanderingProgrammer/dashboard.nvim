@@ -1,9 +1,11 @@
-print('loaded that thing')
-
 local M = {}
 
+M.instance = function()
+    print('HERE WE ARE')
+end
+
 M.setup = function(opts)
-    print('OPTS', opts)
+    -- Currently no options
 end
 
 return M

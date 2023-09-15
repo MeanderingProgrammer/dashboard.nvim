@@ -10,7 +10,7 @@ local function center(lines)
     local center_lines = {}
     for _, line in pairs(lines) do
         local extra_space = vim.o.columns - vim.api.nvim_strwidth(line)
-        local left_pad = math.floor(extra_space / 2) - 6
+        local left_pad = math.floor(extra_space / 2) - 2
         if left_pad > 0 then
             local center_line = (' '):rep(left_pad) .. line
             table.insert(center_lines, center_line)
@@ -22,13 +22,12 @@ local function center(lines)
 end
 
 local function load(bufnr)
-    vim.bo[bufnr].filetype = 'dashboard'
     vim.bo[bufnr].modifiable = true
 
     local lines = {}
-    table.insert(lines, 'test-1')
-    table.insert(lines, 'test-2')
-    table.insert(lines, 'test-3')
+    for _, repo in pairs(repos) do
+        table.insert(lines, repo)
+    end
 
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center(lines))
 
@@ -37,6 +36,15 @@ local function load(bufnr)
 end
 
 M.instance = function()
+    local opts = {
+        ['filetype'] = 'dashboard',
+        ['number'] = false,
+        ['relativenumber'] = false,
+    }
+    for opt, val in pairs(opts) do
+        vim.opt_local[opt] = val
+    end
+
     local bufnr = vim.api.nvim_get_current_buf()
 
     --Print some metadata for now

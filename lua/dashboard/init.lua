@@ -16,6 +16,7 @@ local function center(lines)
 end
 
 local function load(bufnr)
+    vim.bo[bufnr].filetype = 'dashboard'
     vim.bo[bufnr].modifiable = true
 
     local lines = {}

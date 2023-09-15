@@ -1,5 +1,11 @@
 local M = {}
 
+local repos = {}
+table.insert(repos, '~/dev/repos/advent-of-code')
+table.insert(repos, '~/dev/repos/chess')
+table.insert(repos, '~/dev/repos/dashboard.nvim')
+table.insert(repos, '~/dev/repos/learning')
+
 local function center(lines)
     local center_lines = {}
     for _, line in pairs(lines) do

@@ -1,5 +1,16 @@
 local M = {}
 
+local function center(lines)
+    local center_lines = {}
+    for _, line in pairs(lines) do
+        local extra_space = vim.o.columns - vim.api.nvim_strwidth(line)
+        local left_pad = math.floor(extra_space / 2)
+        local center_line = (' '):rep(left_pad) .. line
+        table.insert(center_lines, center_line)
+    end
+    return center_lines
+end
+
 M.instance = function()
     local bufnr = vim.api.nvim_get_current_buf()
 
@@ -7,15 +18,12 @@ M.instance = function()
     print('MODIFIED', vim.bo.modified)
     print('BUF_NUMBER', bufnr)
 
-    local fill = {}
-    table.insert(fill, 'test-1')
-    table.insert(fill, 'test-2')
-    table.insert(fill, 'test-3')
+    local lines = {}
+    table.insert(lines, 'test-1')
+    table.insert(lines, 'test-2')
+    table.insert(lines, 'test-3')
 
-    print('LINES', vim.api.nvim_buf_line_count(bufnr))
-    print('FILL_SIZE', #fill)
-
-    vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, fill)
+    vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, center(lines))
 
     vim.bo[bufnr].modifiable = false
     vim.bo[bufnr].modified = false

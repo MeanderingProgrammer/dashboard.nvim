@@ -1,10 +1,5 @@
 local M = {}
-
-local repos = {}
-table.insert(repos, '~/dev/repos/advent-of-code')
-table.insert(repos, '~/dev/repos/chess')
-table.insert(repos, '~/dev/repos/dashboard.nvim')
-table.insert(repos, '~/dev/repos/learning')
+local context = {}
 
 local function map_key(key, path)
     path = vim.fs.normalize(path)
@@ -34,7 +29,7 @@ local function load(bufnr)
 
     local lines = {}
     --This breaks if there are > 26 repos
-    for i, repo in pairs(repos) do
+    for i, repo in pairs(context.opts.repos) do
         local key = string.char(96 + i)
         map_key(key, repo)
         table.insert(lines, key .. ' : ' .. repo)
@@ -69,7 +64,7 @@ M.instance = function()
 end
 
 M.setup = function(opts)
-    -- Currently no options
+    context.opts = opts
 end
 
 return M

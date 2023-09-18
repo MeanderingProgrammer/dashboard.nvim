@@ -25,10 +25,8 @@ M.get_padded_table = function(lines)
     local padded_table = {}
     local extra_lines = vim.o.lines - #lines
     local top_pad = math.floor(extra_lines / 2) - 2
-    if top_pad > 0 then
-        for _ = 1, top_pad do
-            table.insert(padded_table, '')
-        end
+    for _ = 1, top_pad do
+        table.insert(padded_table, '')
     end
     return padded_table
 end

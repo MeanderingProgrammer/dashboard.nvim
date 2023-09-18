@@ -12,7 +12,8 @@ local function center(lines)
             line = util.pad_left(line, vim.api.nvim_strwidth(line))
             table.insert(center_lines, line)
         elseif type(line) == 'table' then
-            local content = line.icon .. ' ' .. line.dir
+            local icon = util.get_icon(line.dir)
+            local content = icon .. ' ' .. line.dir
             local inner_pad = max_width - vim.api.nvim_strwidth(content) - 2
             content = util.pad_left(content, max_width)
             content = content .. (' '):rep(inner_pad) .. '[' .. line.key .. ']'
@@ -38,12 +39,11 @@ local function set_buffer(bufnr)
         table.insert(lines, line)
     end
     table.insert(lines, os.date('%Y-%m-%d %H:%M:%S'))
-    table.insert(lines, '󰊢')
     --This breaks if there are > 26 repos
     for i, dir in pairs(context.opts.directories) do
         local key = string.char(96 + i)
         map_key(key, dir)
-        table.insert(lines, { icon = '', dir = dir, key = key })
+        table.insert(lines, { dir = dir, key = key })
         table.insert(lines, '')
     end
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center(lines))

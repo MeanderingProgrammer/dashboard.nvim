@@ -44,6 +44,7 @@ local function set_buffer(bufnr)
         local key = string.char(96 + i)
         map_key(key, dir)
         table.insert(lines, { icon = '', dir = dir, key = key })
+        table.insert(lines, '')
     end
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center(lines))
 end

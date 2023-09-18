@@ -6,6 +6,14 @@ table.insert(repos, '~/dev/repos/chess')
 table.insert(repos, '~/dev/repos/dashboard.nvim')
 table.insert(repos, '~/dev/repos/learning')
 
+local function map_key(key, path)
+    path = vim.fs.normalize(path)
+    vim.keymap.set('n', key, function()
+        vim.cmd('lcd ' .. path)
+        vim.cmd('e .')
+    end, { buffer = true })
+end
+
 local function center(lines)
     local center_lines = {}
     for _, line in pairs(lines) do
@@ -25,8 +33,11 @@ local function load(bufnr)
     vim.bo[bufnr].modifiable = true
 
     local lines = {}
-    for _, repo in pairs(repos) do
-        table.insert(lines, repo)
+    --This breaks if there are > 26 repos
+    for i, repo in pairs(repos) do
+        local key = string.char(96 + i)
+        map_key(key, repo)
+        table.insert(lines, key .. ' : ' .. repo)
     end
 
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center(lines))
@@ -47,17 +58,11 @@ M.instance = function()
 
     local bufnr = vim.api.nvim_get_current_buf()
 
-    --Print some metadata for now
-    --print('MODE', vim.api.nvim_get_mode().mode)
-    --print('MODIFIED', vim.bo.modified)
-    --print('BUF_NUMBER', bufnr)
-
     load(bufnr)
 
     --Reload on resize
     vim.api.nvim_create_autocmd('VimResized', {
         callback = function()
-            print('CALLED', vim.o.columns)
             load(bufnr)
         end,
     })

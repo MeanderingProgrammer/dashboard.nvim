@@ -1,3 +1,5 @@
+local art = require('dashboard.art')
+
 local M = {}
 local context = {}
 
@@ -28,6 +30,11 @@ local function load(bufnr)
     vim.bo[bufnr].modifiable = true
 
     local lines = {}
+
+    for _, line in pairs(art.header) do
+        table.insert(lines, line)
+    end
+
     --This breaks if there are > 26 repos
     for i, repo in pairs(context.opts.repos) do
         local key = string.char(96 + i)

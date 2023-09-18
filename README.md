@@ -21,9 +21,8 @@ return {
     },
     config = function()
         require('dashboard').setup({
-            repos = {
-                --List of repository directory paths
-            },
+            --List of directory paths
+            directories = {},
         })
     end,
 }

@@ -48,17 +48,16 @@ M.instance = function()
     local bufnr = vim.api.nvim_get_current_buf()
 
     --Print some metadata for now
-    print('MODE', vim.api.nvim_get_mode().mode)
-    print('MODIFIED', vim.bo.modified)
-    print('BUF_NUMBER', bufnr)
+    --print('MODE', vim.api.nvim_get_mode().mode)
+    --print('MODIFIED', vim.bo.modified)
+    --print('BUF_NUMBER', bufnr)
 
     load(bufnr)
 
     --Reload on resize
     vim.api.nvim_create_autocmd('VimResized', {
-        buffer = bufnr,
-        group = vim.api.nvim_create_augroup('Dashboard', { clear = true }),
         callback = function()
+            print('CALLED', vim.o.columns)
             load(bufnr)
         end,
     })

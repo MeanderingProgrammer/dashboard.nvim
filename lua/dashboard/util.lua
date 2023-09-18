@@ -21,7 +21,6 @@ M.get_max_width = function(lines)
     return vim.fn.max(lengths)
 end
 
-
 M.get_padded_table = function(lines)
     local padded_table = {}
     local extra_lines = vim.o.lines - #lines

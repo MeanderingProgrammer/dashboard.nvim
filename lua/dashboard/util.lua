@@ -5,6 +5,8 @@ M.set_options = function()
         ['filetype'] = 'dashboard',
         ['number'] = false,
         ['relativenumber'] = false,
+        ['bufhidden'] = 'wipe',
+        ['swapfile'] = false,
     }
     for opt, val in pairs(opts) do
         vim.opt_local[opt] = val

@@ -24,6 +24,8 @@ return {
     },
     config = function()
         require('dashboard').setup({
+            --List of directory paths
+            directories = {},
             colors = {
                 --Color used to display icons
                 icon = '#F6C177',
@@ -32,8 +34,6 @@ return {
                 --Color used to display hotkeys
                 hotkey = '#31748F',
             },
-            --List of directory paths
-            directories = {},
         })
     end,
 }

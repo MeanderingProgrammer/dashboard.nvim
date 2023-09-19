@@ -112,13 +112,13 @@ end
 M.setup = function(opts)
     opts = opts or {}
     local default_opts = {
+        directories = {},
         -- https://rosepinetheme.com/palette/ingredients/#rose-pine
         colors = {
             icon = '#F6C177',
             directory = '#908CAA',
             hotkey = '#31748F',
         },
-        directories = {},
     }
     context.opts = vim.tbl_deep_extend('force', default_opts, opts)
 end

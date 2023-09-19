@@ -70,9 +70,9 @@ local function set_buffer(bufnr)
         set_highlight('Hotkey', highlight.line, highlight.hotkey)
     end
     vim.api.nvim_set_hl_ns(namespace)
-    vim.api.nvim_set_hl(namespace, 'Icon', { fg = '#F6C177' })
-    vim.api.nvim_set_hl(namespace, 'Directory', { fg = '#908CAA' })
-    vim.api.nvim_set_hl(namespace, 'Hotkey', { fg = '#31748F' })
+    vim.api.nvim_set_hl(namespace, 'Icon', { fg = context.opts.colors.icon })
+    vim.api.nvim_set_hl(namespace, 'Directory', { fg = context.opts.colors.directory })
+    vim.api.nvim_set_hl(namespace, 'Hotkey', { fg = context.opts.colors.hotkey })
 end
 
 local function load(bufnr)
@@ -95,7 +95,17 @@ M.instance = function()
 end
 
 M.setup = function(opts)
-    context.opts = opts
+    opts = opts or {}
+    local default_opts = {
+        -- https://rosepinetheme.com/palette/ingredients/#rose-pine
+        colors = {
+            icon = '#F6C177',
+            directory = '#908CAA',
+            hotkey = '#31748F',
+        },
+        directories = {},
+    }
+    context.opts = vim.tbl_deep_extend('force', default_opts, opts)
 end
 
 return M

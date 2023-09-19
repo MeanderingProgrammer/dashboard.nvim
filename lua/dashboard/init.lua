@@ -70,9 +70,9 @@ local function set_buffer(bufnr)
         set_highlight('Hotkey', highlight.line, highlight.hotkey)
     end
     vim.api.nvim_set_hl_ns(namespace)
-    vim.api.nvim_set_hl(namespace, 'Icon', { fg = '#FFCC00' })
-    vim.api.nvim_set_hl(namespace, 'Directory', { fg = '#808080' })
-    vim.api.nvim_set_hl(namespace, 'Hotkey', { fg = '#006400' })
+    vim.api.nvim_set_hl(namespace, 'Icon', { fg = '#F6C177' })
+    vim.api.nvim_set_hl(namespace, 'Directory', { fg = '#908CAA' })
+    vim.api.nvim_set_hl(namespace, 'Hotkey', { fg = '#31748F' })
 end
 
 local function load(bufnr)

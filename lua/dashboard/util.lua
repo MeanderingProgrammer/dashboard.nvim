@@ -42,7 +42,7 @@ end
 M.pad_left = function(length)
     local extra_space = vim.o.columns - length
     local left_pad = math.floor(extra_space / 2) - 2
-    if left_pad > 0 then
+    if left_pad > 0 and length > 0 then
         return (' '):rep(left_pad)
     else
         return ''

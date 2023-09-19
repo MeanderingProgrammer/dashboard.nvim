@@ -10,6 +10,9 @@ Neovim dashboard plugin
 
 # Install
 
+All setup options are optional and shown with their default values, though not setting any directories
+would be a strange choice.
+
 ## Lazy.nvim
 
 ```lua
@@ -21,6 +24,14 @@ return {
     },
     config = function()
         require('dashboard').setup({
+            colors = {
+                --Color used to display icons
+                icon = '#F6C177',
+                --Color used to display directory paths
+                directory = '#908CAA',
+                --Color used to display hotkeys
+                hotkey = '#31748F',
+            },
             --List of directory paths
             directories = {},
         })

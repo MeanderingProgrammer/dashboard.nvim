@@ -6,6 +6,7 @@ M.set_options = function()
         ['number'] = false,
         ['relativenumber'] = false,
         ['bufhidden'] = 'wipe',
+        ['buflisted'] = false,
         ['swapfile'] = false,
         ['cursorline'] = false,
         ['cursorcolumn'] = false,
@@ -56,6 +57,12 @@ M.get_icon = function(dir)
     else
         return '󰉋'
     end
+end
+
+M.is_empty = function(bufnr)
+    local num_lines = vim.api.nvim_buf_line_count(bufnr)
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+    return num_lines == 1 and lines[1] == ''
 end
 
 return M

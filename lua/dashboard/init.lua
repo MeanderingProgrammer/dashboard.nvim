@@ -92,8 +92,14 @@ local function load(bufnr)
 end
 
 M.instance = function()
-    util.set_options()
     local bufnr = vim.api.nvim_get_current_buf()
+    if not util.is_empty(bufnr) then
+        bufnr = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_win_set_buf(0, bufnr)
+    end
+
+    util.set_options()
+
     load(bufnr)
     --Reload on resize
     vim.api.nvim_create_autocmd('VimResized', {

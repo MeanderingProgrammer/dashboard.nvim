@@ -48,9 +48,9 @@ end
 M.get_icon = function(dir)
     local git_path = vim.fs.normalize(dir .. '/.git')
     if vim.fn.isdirectory(git_path) == 1 then
-        return '󰊢'
-    else
         return ''
+    else
+        return '󰉋'
     end
 end
 

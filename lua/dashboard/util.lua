@@ -7,6 +7,8 @@ M.set_options = function()
         ['relativenumber'] = false,
         ['bufhidden'] = 'wipe',
         ['swapfile'] = false,
+        ['cursorline'] = false,
+        ['cursorcolumn'] = false,
     }
     for opt, val in pairs(opts) do
         vim.opt_local[opt] = val

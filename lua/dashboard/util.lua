@@ -20,9 +20,9 @@ M.len = function(value)
     return vim.api.nvim_strwidth(value)
 end
 
-M.get_padded_table = function(lines)
+M.get_padded_table = function(height)
     local padded_table = {}
-    local extra_lines = vim.api.nvim_win_get_height(0) - #lines
+    local extra_lines = vim.api.nvim_win_get_height(0) - height
     local top_pad = math.floor(extra_lines / 2) - 2
     for _ = 1, top_pad do
         table.insert(padded_table, '')
@@ -30,10 +30,10 @@ M.get_padded_table = function(lines)
     return padded_table
 end
 
-M.pad_left = function(length)
-    local extra_space = vim.api.nvim_win_get_width(0) - length
+M.pad_left = function(width)
+    local extra_space = vim.api.nvim_win_get_width(0) - width
     local left_pad = math.floor(extra_space / 2) - 2
-    if left_pad > 0 and length > 0 then
+    if left_pad > 0 and width > 0 then
         return (' '):rep(left_pad)
     else
         return ''

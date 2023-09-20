@@ -17,7 +17,7 @@ end
 
 local function center(lines)
     local max_width = get_max_width(lines)
-    local center_lines = util.get_padded_table(lines)
+    local center_lines = util.get_padded_table(#lines)
     local highlights = {}
     for _, line in pairs(lines) do
         if type(line) == 'string' then

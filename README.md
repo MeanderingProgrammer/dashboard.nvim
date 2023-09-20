@@ -2,7 +2,7 @@
 
 Neovim dashboard plugin
 
-![Preview](preview.png)
+![Preview](images/preview.png)
 
 # Features
 

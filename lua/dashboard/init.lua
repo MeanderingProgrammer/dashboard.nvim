@@ -43,10 +43,15 @@ end
 
 local function set_buffer(bufnr)
     local lines = {}
+
     for _, line in pairs(context.opts.header) do
         table.insert(lines, line)
     end
-    table.insert(lines, os.date('%Y-%m-%d %H:%M:%S'))
+
+    if context.opts.date_format then
+        table.insert(lines, os.date(context.opts.date_format))
+    end
+
     --This breaks if there are > 26 repos
     for i, dir in pairs(context.opts.directories) do
         local key = string.char(96 + i)
@@ -98,6 +103,7 @@ M.setup = function(opts)
     opts = opts or {}
     local default_opts = {
         header = {},
+        date_format = nil,
         directories = {},
         highlight_groups = {
             icon = 'Constant',

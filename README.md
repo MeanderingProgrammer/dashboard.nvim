@@ -4,16 +4,20 @@ Neovim dashboard plugin
 
 ![Preview](images/preview.png)
 
+* Look at the `Options` -> `header` section to get results like above
+
 # Features
 
-* Provide directory paths, plugin will display them on the dashboard and make them accessible with
-  single letter hotkey.
-* Order of input is preserved and hotkeys are generated sequentially, making experience consistent.
+* Provide directories and this plugin will:
+ * Display them on the dashboard
+ * Make them accessible with single letter hotkey
+* Input is ordered and hotkeys are generated sequentially, making for a consistent experience
 
 # Install
 
-All setup options are optional and shown with their default values, though not setting any directories
-would be a strange choice.
+This plugin is going through a lot of changes.
+
+Screenshot may not correspond to configuration below or even be possible anymore.
 
 ## Lazy.nvim
 
@@ -28,6 +32,8 @@ return {
         require('dashboard').setup({
             --Dashboard header
             header = {},
+            --Format to display date in
+            date_format = '%Y-%m-%d %H:%M:%S',
             --List of directory paths
             directories = {},
             --Highlight groups to use for various components
@@ -41,7 +47,9 @@ return {
 }
 ```
 
-# Adding a Header
+# Options
+
+## `header`
 
 By default no header is provided by the plugin. As it is just an array of strings you can create
 your own or use another plugin which provides the ascii art.

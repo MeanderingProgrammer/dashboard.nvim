@@ -9,17 +9,20 @@ local function center(lines)
     local highlights = {}
     for _, line in pairs(lines) do
         if type(line) == 'string' then
-            local left_padding = util.pad_left(util.len(line))
-            table.insert(center_lines, left_padding .. line)
+            local left_pad = util.pad_left(util.len(line))
+            table.insert(center_lines, left_pad .. line)
         elseif type(line) == 'table' then
-            local icon = util.get_icon(line.dir)
-            local content = icon .. ' ' .. line.dir
             local left_padding = util.pad_left(max_width)
-            local inner_pad = max_width - util.len(content) - 2
+            local inner_content = string.format('%s %s', util.get_icon(line.dir), line.dir)
+            local content = string.format(
+                '%s%s%s [%s]',
+                left_padding,
+                inner_content,
+                (' '):rep(max_width - util.len(inner_content) - 2),
+                line.key
+            )
 
-            content = left_padding .. content .. (' '):rep(inner_pad) .. '[' .. line.key .. ']'
             table.insert(center_lines, content)
-
             table.insert(highlights, {
                 line = #center_lines - 1,
                 icon = { start = util.len(left_padding), length = 4 },

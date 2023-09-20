@@ -6,8 +6,8 @@ Neovim dashboard plugin
 
 # Features
 
-* Provide directory paths, plugin will display them on the new dashboard and make them accessible
-  with single letter hotkey.
+* Provide directory paths, plugin will display them on the dashboard and make them accessible with
+  single letter hotkey.
 * Order of input is preserved and hotkeys are generated sequentially, making experience consistent.
 
 # Install

@@ -4,7 +4,7 @@ Neovim dashboard plugin
 
 ![Preview](images/preview.png)
 
-* Look at the `Options` -> `header` section to get results like above
+* Look at the [Options -> header](#header) section to get results like above
 
 # Features
 

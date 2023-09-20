@@ -4,29 +4,6 @@ local util = require('dashboard.util')
 local M = {}
 local context = {}
 
-local function set_highlights(bufnr, highlights)
-    local icon_group = 'DashboardIcon'
-    local dir_group = 'DashboardDirectory'
-    local key_group = 'DashboardHotkey'
-
-    local function set_highlight(name, line, highlight)
-        local start = highlight.start
-        vim.api.nvim_buf_add_highlight(bufnr, -1, name, line, start, start + highlight.length)
-    end
-    for _, highlight in pairs(highlights) do
-        set_highlight(icon_group, highlight.line, highlight.icon)
-        set_highlight(dir_group, highlight.line, highlight.directory)
-        set_highlight(key_group, highlight.line, highlight.hotkey)
-    end
-
-    local function create_group(name, color)
-        vim.api.nvim_set_hl(0, name, { fg = color })
-    end
-    create_group(icon_group, context.opts.colors.icon)
-    create_group(dir_group, context.opts.colors.directory)
-    create_group(key_group, context.opts.colors.hotkey)
-end
-
 local function center(lines)
     local max_width = util.get_max_width(lines)
     local center_lines = util.get_padded_table(lines)
@@ -81,7 +58,16 @@ local function set_buffer(bufnr)
 
     local center_lines, highlights = center(lines)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center_lines)
-    set_highlights(bufnr, highlights)
+    local function set_highlight(name, line, highlight)
+        local start = highlight.start
+        vim.api.nvim_buf_add_highlight(bufnr, -1, name, line, start, start + highlight.length)
+    end
+    local groups = context.opts.color_groups
+    for _, highlight in pairs(highlights) do
+        set_highlight(groups.icon, highlight.line, highlight.icon)
+        set_highlight(groups.directory, highlight.line, highlight.directory)
+        set_highlight(groups.hotkey, highlight.line, highlight.hotkey)
+    end
 end
 
 local function load(bufnr)
@@ -113,11 +99,10 @@ M.setup = function(opts)
     opts = opts or {}
     local default_opts = {
         directories = {},
-        -- https://rosepinetheme.com/palette/ingredients/#rose-pine
-        colors = {
-            icon = '#F6C177',
-            directory = '#908CAA',
-            hotkey = '#31748F',
+        color_groups = {
+            icon = 'Constant',
+            directory = 'Delimiter',
+            hotkey = 'Statement',
         },
     }
     context.opts = vim.tbl_deep_extend('force', default_opts, opts)

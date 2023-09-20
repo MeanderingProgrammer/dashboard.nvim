@@ -26,13 +26,13 @@ return {
         require('dashboard').setup({
             --List of directory paths
             directories = {},
-            colors = {
-                --Color used to display icons
-                icon = '#F6C177',
-                --Color used to display directory paths
-                directory = '#908CAA',
-                --Color used to display hotkeys
-                hotkey = '#31748F',
+            color_groups = {
+                --Color group to use for icons
+                icon = 'Constant',
+                --Color group to use for directory paths
+                directory = 'Delimiter',
+                --Color group to use for hotkeys
+                hotkey = 'Statement',
             },
         })
     end,

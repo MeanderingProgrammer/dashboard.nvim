@@ -29,12 +29,14 @@ local function center(lines)
             local icon = util.get_icon(line.dir)
             local inner_content = string.format('%s %s', icon, line.dir)
 
+            local hotkey_content = string.format('[%s]', line.key)
+
             local content = string.format(
-                '%s%s%s [%s]',
+                '%s%s%s%s',
                 left_padding,
                 inner_content,
-                (' '):rep(max_width - util.len(inner_content) - 3),
-                line.key
+                (' '):rep(max_width - util.len(inner_content) - #hotkey_content),
+                hotkey_content
             )
 
             table.insert(center_lines, content)
@@ -42,7 +44,7 @@ local function center(lines)
                 line = #center_lines - 1,
                 icon = { start = #left_padding, length = #icon + 1 },
                 directory = { start = #left_padding + #icon + 1, length = #line.dir },
-                hotkey = { start = #content - 3, length = 3 }
+                hotkey = { start = #content - #hotkey_content, length = #hotkey_content }
             })
         else
             error('Unhandled type: ' .. type(line))

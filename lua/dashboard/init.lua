@@ -62,7 +62,7 @@ local function set_buffer(bufnr)
         local start = highlight.start
         vim.api.nvim_buf_add_highlight(bufnr, -1, name, line, start, start + highlight.length)
     end
-    local groups = context.opts.color_groups
+    local groups = context.opts.highlight_groups
     for _, highlight in pairs(highlights) do
         set_highlight(groups.icon, highlight.line, highlight.icon)
         set_highlight(groups.directory, highlight.line, highlight.directory)
@@ -99,7 +99,7 @@ M.setup = function(opts)
     opts = opts or {}
     local default_opts = {
         directories = {},
-        color_groups = {
+        highlight_groups = {
             icon = 'Constant',
             directory = 'Delimiter',
             hotkey = 'Statement',

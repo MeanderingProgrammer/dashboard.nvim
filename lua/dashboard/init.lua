@@ -3,8 +3,20 @@ local util = require('dashboard.util')
 local M = {}
 local context = {}
 
+local function get_max_width(lines)
+    local lengths = {}
+    for _, line in pairs(lines) do
+        if type(line) == 'string' then
+            table.insert(lengths, util.len(line))
+        elseif type(line) == 'table' and line.dir then
+            table.insert(lengths, util.len(line.dir) + 6)
+        end
+    end
+    return vim.fn.max(lengths)
+end
+
 local function center(lines)
-    local max_width = util.get_max_width(lines)
+    local max_width = get_max_width(lines)
     local center_lines = util.get_padded_table(lines)
     local highlights = {}
     for _, line in pairs(lines) do

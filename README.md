@@ -89,5 +89,4 @@ but I was looking for something more user defined as opposed to inferred.
 # TODO
 
 * Look into autogroups, figure out if there's a nice way to avoid stacking calls
-* Fix center alignment when other windows are open, will require using something other than `vim.o`
 * Decide on desired behavior when hotkey is pressed while multiple windows are open

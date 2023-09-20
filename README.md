@@ -24,19 +24,49 @@ return {
     },
     config = function()
         require('dashboard').setup({
+            --Dashboard header
+            header = {},
             --List of directory paths
             directories = {},
+            --Highlight groups to use for various components
             highlight_groups = {
-                --Highlight group to use for icons
                 icon = 'Constant',
-                --Highlight group to use for directory paths
                 directory = 'Delimiter',
-                --Highlight group to use for hotkeys
                 hotkey = 'Statement',
             },
         })
     end,
 }
+```
+
+# Adding a Header
+
+By default no header is provided by the plugin. As it is just an array of strings you can create
+your own or use another plugin which provides the ascii art.
+
+For example using [MaximilianLloyd/ascii.nvim](https://github.com/MaximilianLloyd/ascii.nvim) in
+`Lazy.nvim` to achieve the look in the screenshots:
+
+```lua
+return {
+    'MeanderingProgrammer/dashboard.nvim',
+    event = 'VimEnter',
+    dependencies = {
+        'nvim-tree/nvim-web-devicons',
+        { 'MaximilianLloyd/ascii.nvim', dependencies = { 'MunifTanjim/nui.nvim' } },
+    },
+    config = function()
+        require('dashboard').setup({
+            header = require('ascii').art.text.neovim.sharp,
+        })
+    end,
+}
+```
+
+You can also use methods provided by the ascii plugin to randomize the look on every load, for example:
+
+```lua
+require('ascii').get_random_global()
 ```
 
 # Acknowledgements
@@ -48,7 +78,7 @@ but I was looking for something more user defined as opposed to inferred.
 
 # TODO
 
-* See if there is a decent way to replace the hard coded ascii art
 * Look into autogroups, figure out if there's a nice way to avoid stacking calls
 * Fix center alignment when other windows are open, will require using something other than `vim.o`
 * Decide on desired behavior when hotkey is pressed while multiple windows are open
+* Add screenshots

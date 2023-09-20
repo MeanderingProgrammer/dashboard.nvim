@@ -1,4 +1,3 @@
-local art = require('dashboard.art')
 local util = require('dashboard.util')
 
 local M = {}
@@ -44,7 +43,7 @@ end
 
 local function set_buffer(bufnr)
     local lines = {}
-    for _, line in pairs(art.header) do
+    for _, line in pairs(context.opts.header) do
         table.insert(lines, line)
     end
     table.insert(lines, os.date('%Y-%m-%d %H:%M:%S'))
@@ -98,6 +97,7 @@ end
 M.setup = function(opts)
     opts = opts or {}
     local default_opts = {
+        header = {},
         directories = {},
         highlight_groups = {
             icon = 'Constant',

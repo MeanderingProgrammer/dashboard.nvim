@@ -25,6 +25,8 @@ M.get_max_width = function(lines)
     for _, line in pairs(lines) do
         if type(line) == 'string' then
             table.insert(lengths, M.len(line))
+        elseif type(line) == 'table' and line.dir then
+            table.insert(lengths, M.len(line.dir) + 6)
         end
     end
     return vim.fn.max(lengths)

@@ -9,7 +9,7 @@ local function get_max_width(lines)
         if type(line) == 'string' then
             table.insert(lengths, util.len(line))
         elseif type(line) == 'table' and line.dir then
-            table.insert(lengths, util.len(line.dir) + 6)
+            table.insert(lengths, #line.dir + 6)
         end
     end
     return vim.fn.max(lengths)
@@ -23,9 +23,18 @@ local function center(lines)
     for _, line in pairs(lines) do
         if type(line) == 'string' then
             local left_pad = util.pad_left(util.len(line))
-            table.insert(center_lines, left_pad .. line)
+            local content = string.format('%s%s', left_pad, line)
+
+            table.insert(center_lines, content)
+
+            table.insert(highlights, {
+                line = #center_lines - 1,
+                name = groups.header,
+                start = #left_pad,
+                length = #line,
+            })
         elseif type(line) == 'table' then
-            local left_padding = util.pad_left(max_width)
+            local left_pad = util.pad_left(max_width)
 
             local icon = util.get_icon(line.dir)
             local inner_content = string.format('%s %s', icon, line.dir)
@@ -34,7 +43,7 @@ local function center(lines)
 
             local content = string.format(
                 '%s%s%s%s',
-                left_padding,
+                left_pad,
                 inner_content,
                 (' '):rep(max_width - util.len(inner_content) - #hotkey_content),
                 hotkey_content
@@ -45,13 +54,13 @@ local function center(lines)
             table.insert(highlights, {
                 line = #center_lines - 1,
                 name = groups.icon,
-                start = #left_padding,
+                start = #left_pad,
                 length = #icon + 1,
             })
             table.insert(highlights, {
                 line = #center_lines - 1,
                 name = groups.directory,
-                start = #left_padding + #icon + 1,
+                start = #left_pad + #icon + 1,
                 length = #line.dir,
             })
             table.insert(highlights, {
@@ -140,7 +149,8 @@ M.setup = function(opts)
         date_format = nil,
         directories = {},
         highlight_groups = {
-            icon = 'Constant',
+            header = 'Constant',
+            icon = 'Error',
             directory = 'Delimiter',
             hotkey = 'Statement',
         },

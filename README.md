@@ -38,7 +38,8 @@ return {
             directories = {},
             --Highlight groups to use for various components
             highlight_groups = {
-                icon = 'Constant',
+                header = 'Constant',
+                icon = 'Error',
                 directory = 'Delimiter',
                 hotkey = 'Statement',
             },

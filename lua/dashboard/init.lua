@@ -18,6 +18,7 @@ end
 local function center(lines)
     local max_width = get_max_width(lines)
     local center_lines = util.get_padded_table(#lines)
+    local groups = context.opts.highlight_groups
     local highlights = {}
     for _, line in pairs(lines) do
         if type(line) == 'string' then
@@ -40,11 +41,24 @@ local function center(lines)
             )
 
             table.insert(center_lines, content)
+
             table.insert(highlights, {
                 line = #center_lines - 1,
-                icon = { start = #left_padding, length = #icon + 1 },
-                directory = { start = #left_padding + #icon + 1, length = #line.dir },
-                hotkey = { start = #content - #hotkey_content, length = #hotkey_content }
+                name = groups.icon,
+                start = #left_padding,
+                length = #icon + 1,
+            })
+            table.insert(highlights, {
+                line = #center_lines - 1,
+                name = groups.directory,
+                start = #left_padding + #icon + 1,
+                length = #line.dir,
+            })
+            table.insert(highlights, {
+                line = #center_lines - 1,
+                name = groups.hotkey,
+                start = #content - #hotkey_content,
+                length = #hotkey_content,
             })
         else
             error('Unhandled type: ' .. type(line))
@@ -86,18 +100,11 @@ local function set_buffer(bufnr)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center_lines)
 
     local ns_id = vim.api.nvim_create_namespace('Dashboard')
-    local function set_highlight(name, line, highlight)
-        vim.api.nvim_buf_set_extmark(bufnr, ns_id, line, highlight.start, {
-            end_col = highlight.start + highlight.length,
-            hl_group = name,
-        })
-    end
-
-    local groups = context.opts.highlight_groups
     for _, highlight in pairs(highlights) do
-        set_highlight(groups.icon, highlight.line, highlight.icon)
-        set_highlight(groups.directory, highlight.line, highlight.directory)
-        set_highlight(groups.hotkey, highlight.line, highlight.hotkey)
+        vim.api.nvim_buf_set_extmark(bufnr, ns_id, highlight.line, highlight.start, {
+            end_col = highlight.start + highlight.length,
+            hl_group = highlight.name,
+        })
     end
 end
 

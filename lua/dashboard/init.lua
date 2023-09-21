@@ -81,11 +81,17 @@ local function set_buffer(bufnr)
     end
 
     local center_lines, highlights = center(lines)
+
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center_lines)
+
+    local ns_id = vim.api.nvim_create_namespace('Dashboard')
     local function set_highlight(name, line, highlight)
-        local start = highlight.start
-        vim.api.nvim_buf_add_highlight(bufnr, -1, name, line, start, start + highlight.length)
+        vim.api.nvim_buf_set_extmark(bufnr, ns_id, line, highlight.start, {
+            end_col = highlight.start + highlight.length,
+            hl_group = name,
+        })
     end
+
     local groups = context.opts.highlight_groups
     for _, highlight in pairs(highlights) do
         set_highlight(groups.icon, highlight.line, highlight.icon)

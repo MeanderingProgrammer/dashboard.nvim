@@ -39,7 +39,7 @@ return {
             --Highlight groups to use for various components
             highlight_groups = {
                 header = 'Constant',
-                icon = 'Error',
+                icon = 'Type',
                 directory = 'Delimiter',
                 hotkey = 'Statement',
             },

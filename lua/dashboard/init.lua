@@ -150,7 +150,7 @@ M.setup = function(opts)
         directories = {},
         highlight_groups = {
             header = 'Constant',
-            icon = 'Error',
+            icon = 'Type',
             directory = 'Delimiter',
             hotkey = 'Statement',
         },

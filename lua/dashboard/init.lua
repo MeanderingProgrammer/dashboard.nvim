@@ -72,12 +72,13 @@ local function set_buffer(bufnr)
         table.insert(lines, os.date(context.opts.date_format))
     end
 
-    --This breaks if there are > 26 repos
     for i, dir in pairs(context.opts.directories) do
-        local key = string.char(96 + i)
-        map_key(key, dir)
-        table.insert(lines, { dir = dir, key = key })
-        table.insert(lines, '')
+        if i <= 26 then
+            local key = string.char(96 + i)
+            map_key(key, dir)
+            table.insert(lines, { dir = dir, key = key })
+            table.insert(lines, '')
+        end
     end
 
     local center_lines, highlights = center(lines)

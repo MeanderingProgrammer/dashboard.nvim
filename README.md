@@ -31,13 +31,13 @@ return {
     },
     config = function()
         require('dashboard').setup({
-            --Dashboard header
+            -- Dashboard header
             header = {},
-            --Format to display date in
+            -- Format to display date in
             date_format = nil,
-            --List of directory paths
+            -- List of directory paths
             directories = {},
-            --Highlight groups to use for various components
+            -- Highlight groups to use for various components
             highlight_groups = {
                 header = 'Constant',
                 icon = 'Type',

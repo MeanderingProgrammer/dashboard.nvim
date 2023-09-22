@@ -142,7 +142,7 @@ M.instance = function()
     util.set_options()
 
     load(bufnr)
-    --Reload on resize
+    -- Reload on resize
     vim.api.nvim_create_autocmd('VimResized', {
         callback = function()
             log('Resizing %s', bufnr)

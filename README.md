@@ -8,6 +8,7 @@ Neovim dashboard plugin
 
 # Features
 
+* Fully customizable header with reference for integrating with ascii art plugin
 * Provide directories and this plugin will:
     * Display them on the dashboard
     * Make them accessible with single letter hotkey

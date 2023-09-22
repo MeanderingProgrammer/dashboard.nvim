@@ -40,9 +40,13 @@ M.pad_left = function(width)
     end
 end
 
+M.is_dir = function(dir)
+    local path = vim.fs.normalize(dir)
+    return vim.fn.isdirectory(path) == 1
+end
+
 M.get_icon = function(dir)
-    local git_path = vim.fs.normalize(dir .. '/.git')
-    if vim.fn.isdirectory(git_path) == 1 then
+    if M.is_dir(dir .. '/.git') then
         return ''
     else
         return ''

@@ -92,3 +92,4 @@ but I was looking for something more user defined as opposed to inferred.
 
 * Look into autogroups, figure out if there's a nice way to avoid stacking calls
 * Decide on desired behavior when hotkey is pressed while multiple windows are open
+* Do we need `loaded_dashboard` at the top of [dashboard.lua](plugin/dashboard.lua)

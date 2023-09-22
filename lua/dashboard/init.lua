@@ -96,15 +96,20 @@ local function set_buffer(bufnr)
         table.insert(lines, os.date(context.opts.date_format))
     end
 
-    for i, dir in pairs(context.opts.directories) do
-        if i <= 26 and util.is_dir(dir) then
-            local key = string.char(96 + i)
-            map_key(key, dir)
-            table.insert(lines, { dir = dir, key = key })
-            table.insert(lines, '')
+    local directories = {}
+    for _, dir in pairs(context.opts.directories) do
+        if #directories < 26 and util.is_dir(dir) then
+            table.insert(directories, dir)
         else
-            log('%s is either past the 26th entry or not a directory', dir)
+            log('%s is either past the 26th entry or not a valid directory', dir)
         end
+    end
+
+    for i, dir in pairs(directories) do
+        local key = string.char(96 + i)
+        map_key(key, dir)
+        table.insert(lines, { dir = dir, key = key })
+        table.insert(lines, '')
     end
 
     local center_lines, highlights = center(lines)

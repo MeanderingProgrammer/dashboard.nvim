@@ -2,7 +2,7 @@
 
 Neovim dashboard plugin
 
-![Preview](images/preview.png)
+![Preview](doc/preview.png)
 
 * Look at the [Options -> header](#header) section to get results like above
 
@@ -16,9 +16,9 @@ Neovim dashboard plugin
 
 # Install
 
-This plugin is going through a lot of changes.
+The setups below show the default values, which if supplied will result in an empty screen.
 
-Screenshot may not correspond to configuration below or even be possible anymore.
+It is recommended to provide `directories` at least, and a `header` for some fun.
 
 ## Lazy.nvim
 
@@ -34,7 +34,7 @@ return {
             --Dashboard header
             header = {},
             --Format to display date in
-            date_format = '%Y-%m-%d %H:%M:%S',
+            date_format = nil,
             --List of directory paths
             directories = {},
             --Highlight groups to use for various components
@@ -70,16 +70,58 @@ return {
     config = function()
         require('dashboard').setup({
             header = require('ascii').art.text.neovim.sharp,
+            directories = {
+                '~/.config',
+                '~/Documents/notes',
+                '~/dev/repos/dashboard.nvim',
+                '~/dev/repos/advent-of-code',
+            },
         })
     end,
 }
 ```
+
+Using this exact setup will result in the same Dashboard as the screenshot at the top, assuming these
+are valid directories on your system.
 
 You can also use methods provided by the ascii plugin to randomize the look on every load, for example:
 
 ```lua
 require('ascii').get_random_global()
 ```
+
+## `date_format`
+
+This will add the date right after the header in the format specified.
+
+The date is static and will not be updated until the dashboard is reloaded.
+
+This will build off of the `header` option so the difference in screenshots is more clear.
+
+```lua
+return {
+    'MeanderingProgrammer/dashboard.nvim',
+    event = 'VimEnter',
+    dependencies = {
+        'nvim-tree/nvim-web-devicons',
+        { 'MaximilianLloyd/ascii.nvim', dependencies = { 'MunifTanjim/nui.nvim' } },
+    },
+    config = function()
+        require('dashboard').setup({
+            header = require('ascii').art.text.neovim.sharp,
+            date_format = '%Y-%m-%d %H:%M:%S',
+            directories = {
+                '~/.config',
+                '~/Documents/notes',
+                '~/dev/repos/dashboard.nvim',
+                '~/dev/repos/advent-of-code',
+            },
+        })
+    end,
+}
+```
+
+![Preview with Date](doc/preview-with-date.png)
 
 # Acknowledgements
 

@@ -23,7 +23,7 @@ It is recommended to provide `directories` at least, and a `header` for some fun
 ## Lazy.nvim
 
 ```lua
-return {
+{
     'MeanderingProgrammer/dashboard.nvim',
     event = 'VimEnter',
     dependencies = {
@@ -60,7 +60,7 @@ For example using [MaximilianLloyd/ascii.nvim](https://github.com/MaximilianLloy
 `Lazy.nvim` to achieve the look in the screenshots:
 
 ```lua
-return {
+{
     'MeanderingProgrammer/dashboard.nvim',
     event = 'VimEnter',
     dependencies = {
@@ -99,7 +99,7 @@ The date is static and will not be updated until the dashboard is reloaded.
 This will build off of the `header` option so the difference in screenshots is more clear.
 
 ```lua
-return {
+{
     'MeanderingProgrammer/dashboard.nvim',
     event = 'VimEnter',
     dependencies = {

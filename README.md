@@ -130,6 +130,12 @@ point in the development of this plugin. These plugins do very different things 
 concept of being a dashboard. In many ways `dashboard-nvim` is better and has a lot of neat features
 but I was looking for something more user defined as opposed to inferred.
 
+# Style Check
+
+```
+stylua --check -g '*.lua' -g '!*/dlog.lua' -- .
+```
+
 # TODO
 
 * Look into autogroups, figure out if there's a nice way to avoid stacking calls

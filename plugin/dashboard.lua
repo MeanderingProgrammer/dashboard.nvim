@@ -13,5 +13,5 @@ vim.api.nvim_create_autocmd('UIEnter', {
 })
 
 vim.api.nvim_create_user_command('Dashboard', function()
-  require('dashboard').instance()
+    require('dashboard').instance()
 end, {})

@@ -101,7 +101,7 @@ local function set_buffer(bufnr)
         if #directories < 26 and util.is_dir(dir) then
             table.insert(directories, dir)
         else
-            log('%s is either past the 26th entry or not a valid directory', dir)
+            log('%s either > 26th entry || not a valid directory', dir)
         end
     end
 
@@ -117,10 +117,10 @@ local function set_buffer(bufnr)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center_lines)
 
     local ns_id = vim.api.nvim_create_namespace('Dashboard')
-    for _, highlight in pairs(highlights) do
-        vim.api.nvim_buf_set_extmark(bufnr, ns_id, highlight.line, highlight.start, {
-            end_col = highlight.start + highlight.length,
-            hl_group = highlight.name,
+    for _, hl in pairs(highlights) do
+        vim.api.nvim_buf_set_extmark(bufnr, ns_id, hl.line, hl.start, {
+            end_col = hl.start + hl.length,
+            hl_group = hl.name,
         })
     end
 end

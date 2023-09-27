@@ -73,6 +73,7 @@ For example using [MaximilianLloyd/ascii.nvim](https://github.com/MaximilianLloy
             directories = {
                 '~/.config',
                 '~/Documents/notes',
+                '~/dev/repos/harpoon-core.nvim',
                 '~/dev/repos/dashboard.nvim',
                 '~/dev/repos/advent-of-code',
             },
@@ -113,6 +114,7 @@ This will build off of the `header` option so the difference in screenshots is m
             directories = {
                 '~/.config',
                 '~/Documents/notes',
+                '~/dev/repos/harpoon-core.nvim',
                 '~/dev/repos/dashboard.nvim',
                 '~/dev/repos/advent-of-code',
             },

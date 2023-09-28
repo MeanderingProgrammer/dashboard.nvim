@@ -1,4 +1,3 @@
-local log = require('dlog')('dashboard')
 local util = require('dashboard.util')
 
 local M = {}
@@ -100,8 +99,6 @@ local function set_buffer(bufnr)
     for _, dir in pairs(context.opts.directories) do
         if #directories < 26 and util.is_dir(dir) then
             table.insert(directories, dir)
-        else
-            log('%s either > 26th entry || not a valid directory', dir)
         end
     end
 
@@ -145,7 +142,6 @@ M.instance = function()
     -- Reload on resize
     vim.api.nvim_create_autocmd('VimResized', {
         callback = function()
-            log('Resizing %s', bufnr)
             load(bufnr)
         end,
     })

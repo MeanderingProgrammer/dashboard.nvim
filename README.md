@@ -4,15 +4,15 @@ Neovim dashboard plugin
 
 ![Preview](doc/preview.png)
 
-* Look at the [Options -> header](#header) section to get results like above
+- Look at the [Options -> header](#header) section to get results like above
 
 # Features
 
-* Fully customizable header with reference for integrating with ascii art plugin
-* Provide directories and this plugin will:
-    * Display them on the dashboard
-    * Make them accessible with single letter hotkey
-* Input is ordered and hotkeys are generated sequentially, making for a consistent experience
+- Fully customizable header with reference for integrating with ascii art plugin
+- Provide directories and this plugin will:
+  - Display them on the dashboard
+  - Make them accessible with single letter hotkey
+- Input is ordered and hotkeys are generated sequentially, making for a consistent experience
 
 # Install
 
@@ -140,6 +140,6 @@ stylua --check -g '*.lua' -g '!*/dlog.lua' -- .
 
 # TODO
 
-* Look into autogroups, figure out if there's a nice way to avoid stacking calls
-* Decide on desired behavior when hotkey is pressed while multiple windows are open
-* Integrate directory list with some existing bookmark plugins
+- Look into autogroups, figure out if there's a nice way to avoid stacking calls
+- Decide on desired behavior when hotkey is pressed while multiple windows are open
+- Integrate directory list with some existing bookmark plugins

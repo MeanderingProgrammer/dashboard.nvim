@@ -137,7 +137,7 @@ but I was looking for something more user defined as opposed to inferred.
 # Style Check
 
 ```
-stylua --check -g '*.lua' -g '!*/dlog.lua' -- .
+stylua --check -g '*.lua' -- .
 ```
 
 # TODO

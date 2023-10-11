@@ -109,6 +109,18 @@ local function set_buffer(bufnr)
         table.insert(lines, '')
     end
 
+    if context.opts.include_metadata then
+        local version = vim.version()
+        local versions = { version.major, version.minor, version.patch }
+        table.insert(lines, 'neovim ' .. table.concat(versions, '.'))
+
+        local status, lazy = pcall(require, 'lazy')
+        if status then
+            local stats = lazy.stats()
+            table.insert(lines, 'Startup Time ' .. stats.startuptime .. ' ms')
+        end
+    end
+
     local center_lines, highlights = center(lines)
 
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center_lines)
@@ -152,6 +164,7 @@ M.setup = function(opts)
     local default_opts = {
         header = {},
         date_format = nil,
+        include_metadata = false,
         directories = {},
         highlight_groups = {
             header = 'Constant',

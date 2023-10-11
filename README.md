@@ -35,6 +35,8 @@ It is recommended to provide `directories` at least, and a `header` for some fun
             header = {},
             -- Format to display date in
             date_format = nil,
+            -- Include version / startup time metadata
+            include_metadata = false,
             -- List of directory paths
             directories = {},
             -- Highlight groups to use for various components

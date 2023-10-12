@@ -5,7 +5,7 @@ local context = {}
 
 local function get_max_width(lines)
     local lengths = {}
-    for _, line in pairs(lines) do
+    for _, line in ipairs(lines) do
         if type(line) == 'string' then
             table.insert(lengths, util.len(line))
         elseif type(line) == 'table' and line.dir then
@@ -20,7 +20,7 @@ local function center(lines)
     local center_lines = util.get_padded_table(#lines)
     local groups = context.opts.highlight_groups
     local highlights = {}
-    for _, line in pairs(lines) do
+    for _, line in ipairs(lines) do
         if type(line) == 'string' then
             local left_pad = util.pad_left(util.len(line))
             local content = string.format('%s%s', left_pad, line)
@@ -87,7 +87,7 @@ end
 local function set_buffer(bufnr)
     local lines = {}
 
-    for _, line in pairs(context.opts.header) do
+    for _, line in ipairs(context.opts.header) do
         table.insert(lines, line)
     end
 
@@ -96,13 +96,13 @@ local function set_buffer(bufnr)
     end
 
     local directories = {}
-    for _, dir in pairs(context.opts.directories) do
+    for _, dir in ipairs(context.opts.directories) do
         if #directories < 26 and util.is_dir(dir) then
             table.insert(directories, dir)
         end
     end
 
-    for i, dir in pairs(directories) do
+    for i, dir in ipairs(directories) do
         local key = string.char(96 + i)
         map_key(key, dir)
         table.insert(lines, { dir = dir, key = key })
@@ -126,7 +126,7 @@ local function set_buffer(bufnr)
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, center_lines)
 
     local ns_id = vim.api.nvim_create_namespace('Dashboard')
-    for _, hl in pairs(highlights) do
+    for _, hl in ipairs(highlights) do
         vim.api.nvim_buf_set_extmark(bufnr, ns_id, hl.line, hl.start, {
             end_col = hl.start + hl.length,
             hl_group = hl.name,

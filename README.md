@@ -35,10 +35,11 @@ It is recommended to provide `directories` at least, and a `header` for some fun
             header = {},
             -- Format to display date in
             date_format = nil,
-            -- Include version / startup time metadata
-            include_metadata = false,
             -- List of directory paths
             directories = {},
+            -- Sections to add at bottom, use function names in sections.lua
+            -- For example 'version' and 'startuptime'
+            footer = {},
             -- Highlight groups to use for various components
             highlight_groups = {
                 header = 'Constant',

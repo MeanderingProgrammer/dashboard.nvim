@@ -1,3 +1,4 @@
+local sections = require('dashboard.sections')
 local util = require('dashboard.util')
 
 local M = {}
@@ -109,15 +110,13 @@ local function set_buffer(bufnr)
         table.insert(lines, '')
     end
 
-    if context.opts.include_metadata then
-        local version = vim.version()
-        local versions = { version.major, version.minor, version.patch }
-        table.insert(lines, 'neovim ' .. table.concat(versions, '.'))
-
-        local status, lazy = pcall(require, 'lazy')
-        if status then
-            local stats = lazy.stats()
-            table.insert(lines, 'Startup Time ' .. stats.startuptime .. ' ms')
+    for _, section_name in ipairs(context.opts.footer) do
+        local section = sections[section_name]
+        if section ~= nil then
+            local line = section()
+            if line ~= nil then
+                table.insert(lines, line)
+            end
         end
     end
 
@@ -141,7 +140,7 @@ local function load(bufnr)
     vim.bo[bufnr].modified = false
 end
 
-M.instance = function()
+function M.instance()
     local bufnr = vim.api.nvim_get_current_buf()
     if not util.is_empty(bufnr) then
         bufnr = vim.api.nvim_create_buf(false, true)
@@ -159,13 +158,13 @@ M.instance = function()
     })
 end
 
-M.setup = function(opts)
+function M.setup(opts)
     opts = opts or {}
     local default_opts = {
         header = {},
         date_format = nil,
-        include_metadata = false,
         directories = {},
+        footer = {},
         highlight_groups = {
             header = 'Constant',
             icon = 'Type',

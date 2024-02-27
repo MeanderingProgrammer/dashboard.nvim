@@ -1,25 +1,13 @@
 local M = {}
 
-function M.set_options()
-    local opts = {
-        ['filetype'] = 'dashboard',
-        ['number'] = false,
-        ['relativenumber'] = false,
-        ['bufhidden'] = 'wipe',
-        ['buflisted'] = false,
-        ['swapfile'] = false,
-        ['cursorline'] = false,
-        ['cursorcolumn'] = false,
-    }
-    for opt, val in pairs(opts) do
-        vim.opt_local[opt] = val
-    end
-end
-
+---@param value string
+---@return integer
 function M.len(value)
     return vim.api.nvim_strwidth(value)
 end
 
+---@param height integer
+---@return string[]
 function M.get_padded_table(height)
     local padded_table = {}
     local extra_lines = vim.api.nvim_win_get_height(0) - height
@@ -30,6 +18,8 @@ function M.get_padded_table(height)
     return padded_table
 end
 
+---@param width integer
+---@return string
 function M.pad_left(width)
     local extra_space = vim.api.nvim_win_get_width(0) - width
     local left_pad = math.floor(extra_space / 2) - 2
@@ -40,11 +30,15 @@ function M.pad_left(width)
     end
 end
 
+---@param dir string
+---@return boolean
 function M.is_dir(dir)
     local path = vim.fs.normalize(dir)
     return vim.fn.isdirectory(path) == 1
 end
 
+---@param dir string
+---@return string
 function M.get_icon(dir)
     if M.is_dir(dir .. '/.git') then
         return ''
@@ -53,6 +47,8 @@ function M.get_icon(dir)
     end
 end
 
+---@param bufnr integer
+---@return boolean
 function M.is_empty(bufnr)
     local num_lines = vim.api.nvim_buf_line_count(bufnr)
     local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)

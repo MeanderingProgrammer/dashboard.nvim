@@ -26,9 +26,7 @@ It is recommended to provide `directories` at least, and a `header` for some fun
 {
     'MeanderingProgrammer/dashboard.nvim',
     event = 'VimEnter',
-    dependencies = {
-        'nvim-tree/nvim-web-devicons',
-    },
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
         require('dashboard').setup({
             -- Dashboard header
@@ -37,8 +35,8 @@ It is recommended to provide `directories` at least, and a `header` for some fun
             date_format = nil,
             -- List of directory paths
             directories = {},
-            -- Sections to add at bottom, use function names in sections.lua
-            -- For example 'version' and 'startuptime'
+            -- Sections to add at bottom, these can be string references to 
+            -- functions in sections.lua, custom strings, or custom functions
             footer = {},
             -- Highlight groups to use for various components
             highlight_groups = {
@@ -127,6 +125,18 @@ This will build off of the `header` option so the difference in screenshots is m
 ```
 
 ![Preview with Date](doc/preview-with-date.png)
+
+## `footer`
+
+Resolving each value in the footer sections happens as follows:
+
+- If the value is a string:
+  - If `sections.lua` has a function with that name call that function and get the result. 
+    Valid values for this are `version` and `startuptime`.
+  - Otherwise use the string value as it was provided.
+- If the value is a function:
+  - Call the function, get the result, and check that it is a string.
+- Otherwise print an error message
 
 # Acknowledgements
 

@@ -1,9 +1,9 @@
 local sections = require('dashboard.sections')
+local state = require('dashboard.state')
 local util = require('dashboard.util')
 
-local M = {}
-local context = {}
-
+---@param lines (string | table)[]
+---@return integer
 local function get_max_width(lines)
     local lengths = {}
     for _, line in ipairs(lines) do
@@ -16,10 +16,19 @@ local function get_max_width(lines)
     return vim.fn.max(lengths)
 end
 
+---@class ResolvedHighlight
+---@field line integer
+---@field name string
+---@field start integer
+---@field length integer
+
+---@param lines (string | table)[]
+---@return string[]
+---@return ResolvedHighlight[]
 local function center(lines)
     local max_width = get_max_width(lines)
     local center_lines = util.get_padded_table(#lines)
-    local groups = context.opts.highlight_groups
+    local groups = state.config.highlight_groups
     local highlights = {}
     for _, line in ipairs(lines) do
         if type(line) == 'string' then
@@ -77,6 +86,8 @@ local function center(lines)
     return center_lines, highlights
 end
 
+---@param key string
+---@param dir string
 local function map_key(key, dir)
     dir = vim.fs.normalize(dir)
     vim.keymap.set('n', key, function()
@@ -85,19 +96,20 @@ local function map_key(key, dir)
     end, { buffer = true })
 end
 
+---@param bufnr integer
 local function set_buffer(bufnr)
     local lines = {}
 
-    for _, line in ipairs(context.opts.header) do
+    for _, line in ipairs(state.config.header) do
         table.insert(lines, line)
     end
 
-    if context.opts.date_format then
-        table.insert(lines, os.date(context.opts.date_format))
+    if state.config.date_format then
+        table.insert(lines, os.date(state.config.date_format))
     end
 
     local directories = {}
-    for _, dir in ipairs(context.opts.directories) do
+    for _, dir in ipairs(state.config.directories) do
         if #directories < 26 and util.is_dir(dir) then
             table.insert(directories, dir)
         end
@@ -110,13 +122,23 @@ local function set_buffer(bufnr)
         table.insert(lines, '')
     end
 
-    for _, section_name in ipairs(context.opts.footer) do
-        local section = sections[section_name]
-        if section ~= nil then
+    for _, section in ipairs(state.config.footer) do
+        if type(section) == 'string' then
+            if sections[section] ~= nil then
+                local line = sections[section]()
+                if line ~= nil then
+                    table.insert(lines, line)
+                end
+            else
+                table.insert(lines, section)
+            end
+        elseif type(section) == 'function' then
             local line = section()
-            if line ~= nil then
+            if line ~= nil and type(line) == 'string' then
                 table.insert(lines, line)
             end
+        else
+            print('Unhandled footer type: ' .. type(section))
         end
     end
 
@@ -133,6 +155,7 @@ local function set_buffer(bufnr)
     end
 end
 
+---@param bufnr integer
 local function load(bufnr)
     vim.bo[bufnr].modifiable = true
     set_buffer(bufnr)
@@ -140,27 +163,25 @@ local function load(bufnr)
     vim.bo[bufnr].modified = false
 end
 
-function M.instance()
-    local bufnr = vim.api.nvim_get_current_buf()
-    if not util.is_empty(bufnr) then
-        bufnr = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_win_set_buf(0, bufnr)
-    end
+local M = {}
 
-    util.set_options()
+---@class UserHighlightGroups
+---@field public header? string
+---@field public icon? string
+---@field public directory? string
+---@field public hotkey? string
 
-    load(bufnr)
-    -- Reload on resize
-    vim.api.nvim_create_autocmd('VimResized', {
-        callback = function()
-            load(bufnr)
-        end,
-    })
-end
+---@class UserConfig
+---@field public header? string[]
+---@field public date_format? string
+---@field public directories? string[]
+---@field public footer? (string | fun(): string?)[]
+---@field public highlight_groups? UserHighlightGroups
 
+---@param opts UserConfig|nil
 function M.setup(opts)
-    opts = opts or {}
-    local default_opts = {
+    ---@type Config
+    local default_config = {
         header = {},
         date_format = nil,
         directories = {},
@@ -172,7 +193,37 @@ function M.setup(opts)
             hotkey = 'Statement',
         },
     }
-    context.opts = vim.tbl_deep_extend('force', default_opts, opts)
+    state.config = vim.tbl_deep_extend('force', default_config, opts or {})
+end
+
+function M.instance()
+    local bufnr = vim.api.nvim_get_current_buf()
+    if not util.is_empty(bufnr) then
+        bufnr = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_win_set_buf(0, bufnr)
+    end
+
+    local opts = {
+        ['filetype'] = 'dashboard',
+        ['number'] = false,
+        ['relativenumber'] = false,
+        ['bufhidden'] = 'wipe',
+        ['buflisted'] = false,
+        ['swapfile'] = false,
+        ['cursorline'] = false,
+        ['cursorcolumn'] = false,
+    }
+    for opt, val in pairs(opts) do
+        vim.opt_local[opt] = val
+    end
+
+    load(bufnr)
+    -- Reload on resize
+    vim.api.nvim_create_autocmd('VimResized', {
+        callback = function()
+            load(bufnr)
+        end,
+    })
 end
 
 return M

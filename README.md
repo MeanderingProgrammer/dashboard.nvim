@@ -26,7 +26,6 @@ It is recommended to provide `directories` at least, and a `header` for some fun
 {
     'MeanderingProgrammer/dashboard.nvim',
     event = 'VimEnter',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
         require('dashboard').setup({
             -- Dashboard header
@@ -65,7 +64,6 @@ For example using [MaximilianLloyd/ascii.nvim](https://github.com/MaximilianLloy
     'MeanderingProgrammer/dashboard.nvim',
     event = 'VimEnter',
     dependencies = {
-        'nvim-tree/nvim-web-devicons',
         { 'MaximilianLloyd/ascii.nvim', dependencies = { 'MunifTanjim/nui.nvim' } },
     },
     config = function()
@@ -105,7 +103,6 @@ This will build off of the `header` option so the difference in screenshots is m
     'MeanderingProgrammer/dashboard.nvim',
     event = 'VimEnter',
     dependencies = {
-        'nvim-tree/nvim-web-devicons',
         { 'MaximilianLloyd/ascii.nvim', dependencies = { 'MunifTanjim/nui.nvim' } },
     },
     config = function()

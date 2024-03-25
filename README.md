@@ -41,7 +41,7 @@ It is recommended to provide `directories` at least, and a `header` for some fun
             -- directory string as an argument
             on_load = function(dir)
                 -- Do nothing
-            end
+            end,
             -- Highlight groups to use for various components
             highlight_groups = {
                 header = 'Constant',

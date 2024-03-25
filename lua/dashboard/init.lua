@@ -93,6 +93,7 @@ local function map_key(key, dir)
     vim.keymap.set('n', key, function()
         vim.cmd('lcd ' .. dir)
         vim.cmd('e .')
+        state.config.on_load(dir)
     end, { buffer = true })
 end
 
@@ -176,6 +177,7 @@ local M = {}
 ---@field public date_format? string
 ---@field public directories? string[]
 ---@field public footer? (string | fun(): string?)[]
+---@field public on_load? fun(string)
 ---@field public highlight_groups? UserHighlightGroups
 
 ---@param opts UserConfig|nil
@@ -186,6 +188,9 @@ function M.setup(opts)
         date_format = nil,
         directories = {},
         footer = {},
+        on_load = function(dir)
+            -- Do nothing
+        end,
         highlight_groups = {
             header = 'Constant',
             icon = 'Type',

@@ -9,6 +9,7 @@
 ---@field public date_format? string
 ---@field public directories string[]
 ---@field public footer (string | fun(): string?)[]
+---@field public on_load fun(dir: string)
 ---@field public highlight_groups HighlightGroups
 
 ---@class State

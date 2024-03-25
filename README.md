@@ -37,6 +37,11 @@ It is recommended to provide `directories` at least, and a `header` for some fun
             -- Sections to add at bottom, these can be string references to 
             -- functions in sections.lua, custom strings, or custom functions
             footer = {},
+            -- Gets called after directory is changed and is provided with the
+            -- directory string as an argument
+            on_load = function(dir)
+                -- Do nothing
+            end
             -- Highlight groups to use for various components
             highlight_groups = {
                 header = 'Constant',

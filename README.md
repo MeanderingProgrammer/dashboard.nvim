@@ -12,11 +12,13 @@ Neovim dashboard plugin
 - Provide directories and this plugin will:
   - Display them on the dashboard
   - Make them accessible with single letter hotkey
-- Input is ordered and hotkeys are generated sequentially, making for a consistent experience
+- Input is ordered and hotkeys are generated sequentially, making for a
+  consistent experience
 
 # Install
 
-The setups below show the default values, which if supplied will result in an empty screen.
+The setups below show the default values, which if supplied will result in an
+empty screen.
 
 It is recommended to provide `directories` at least, and a `header` for some fun.
 
@@ -32,7 +34,7 @@ It is recommended to provide `directories` at least, and a `header` for some fun
             header = {},
             -- Format to display date in
             date_format = nil,
-            -- List of directory paths
+            -- List of directory paths, or functions that return paths
             directories = {},
             -- Sections to add at bottom, these can be string references to 
             -- functions in sections.lua, custom strings, or custom functions
@@ -58,11 +60,11 @@ It is recommended to provide `directories` at least, and a `header` for some fun
 
 ## `header`
 
-By default no header is provided by the plugin. As it is just an array of strings you can create
-your own or use another plugin which provides the ascii art.
+By default no header is provided by the plugin. As it is just an array of strings
+you can create your own or use another plugin which provides the ascii art.
 
-For example using [MaximilianLloyd/ascii.nvim](https://github.com/MaximilianLloyd/ascii.nvim) in
-`Lazy.nvim` to achieve the look in the screenshots:
+For example using [MaximilianLloyd/ascii.nvim](https://github.com/MaximilianLloyd/ascii.nvim)
+in `Lazy.nvim` to achieve the look in the screenshots:
 
 ```lua
 {
@@ -86,10 +88,11 @@ For example using [MaximilianLloyd/ascii.nvim](https://github.com/MaximilianLloy
 }
 ```
 
-Using this exact setup will result in the same Dashboard as the screenshot at the top, assuming these
-are valid directories on your system.
+Using this exact setup will result in the same Dashboard as the screenshot at the
+top, assuming these are valid directories on your system.
 
-You can also use methods provided by the ascii plugin to randomize the look on every load, for example:
+You can also use methods provided by the ascii plugin to randomize the look on every
+load, for example:
 
 ```lua
 require('ascii').get_random_global()
@@ -101,7 +104,8 @@ This will add the date right after the header in the format specified.
 
 The date is static and will not be updated until the dashboard is reloaded.
 
-This will build off of the `header` option so the difference in screenshots is more clear.
+This will build off of the `header` option so the difference in screenshots is
+more clear.
 
 ```lua
 {
@@ -133,8 +137,8 @@ This will build off of the `header` option so the difference in screenshots is m
 Resolving each value in the footer sections happens as follows:
 
 - If the value is a string:
-  - If `sections.lua` has a function with that name call that function and get the result. 
-    Valid values for this are `version` and `startuptime`.
+  - If `sections.lua` has a function with that name call that function and get
+    the result. Valid values for this are `version` and `startuptime`.
   - Otherwise use the string value as it was provided.
 - If the value is a function:
   - Call the function, get the result, and check that it is a string.
@@ -142,19 +146,14 @@ Resolving each value in the footer sections happens as follows:
 
 # Acknowledgements
 
-The popular [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim) plugin was used as a reference
-point in the development of this plugin. These plugins do very different things other than sharing the
-concept of being a dashboard. In many ways `dashboard-nvim` is better and has a lot of neat features
-but I was looking for something more user defined as opposed to inferred.
+The popular [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim) plugin was
+used as a reference point in the development of this plugin. These plugins do very
+different things other than sharing the concept of being a dashboard. In many ways
+`dashboard-nvim` is better and has a lot of neat features but I was looking for
+something more user defined as opposed to inferred.
 
 # Style Check
 
-```
+```bash
 stylua --check -g '*.lua' -- .
 ```
-
-# TODO
-
-- Look into autogroups, figure out if there's a nice way to avoid stacking calls
-- Decide on desired behavior when hotkey is pressed while multiple windows are open
-- Integrate directory list with some existing bookmark plugins

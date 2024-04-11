@@ -109,8 +109,19 @@ local function set_buffer(bufnr)
         table.insert(lines, os.date(state.config.date_format))
     end
 
-    local directories = {}
+    local directory_paths = {}
     for _, dir in ipairs(state.config.directories) do
+        if type(dir) == 'string' then
+            table.insert(directory_paths, dir)
+        elseif type(dir) == 'function' then
+            for _, path in ipairs(dir()) do
+                table.insert(directory_paths, path)
+            end
+        end
+    end
+
+    local directories = {}
+    for _, dir in ipairs(directory_paths) do
         if #directories < 26 and util.is_dir(dir) then
             table.insert(directories, dir)
         end
@@ -175,7 +186,7 @@ local M = {}
 ---@class UserConfig
 ---@field public header? string[]
 ---@field public date_format? string
----@field public directories? string[]
+---@field public directories? (string | fun(): string[])[]
 ---@field public footer? (string | fun(): string?)[]
 ---@field public on_load? fun(string)
 ---@field public highlight_groups? UserHighlightGroups

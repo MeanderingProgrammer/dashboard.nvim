@@ -17,43 +17,48 @@ Neovim dashboard plugin
 
 # Install
 
-The setups below show the default values, which if supplied will result in an
-empty screen.
-
-It is recommended to provide `directories` at least, and a `header` for some fun.
-
-## Lazy.nvim
+## lazy.nvim
 
 ```lua
 {
     'MeanderingProgrammer/dashboard.nvim',
     event = 'VimEnter',
     config = function()
-        require('dashboard').setup({
-            -- Dashboard header
-            header = {},
-            -- Format to display date in
-            date_format = nil,
-            -- List of directory paths, or functions that return paths
-            directories = {},
-            -- Sections to add at bottom, these can be string references to 
-            -- functions in sections.lua, custom strings, or custom functions
-            footer = {},
-            -- Gets called after directory is changed and is provided with the
-            -- directory string as an argument
-            on_load = function(dir)
-                -- Do nothing
-            end,
-            -- Highlight groups to use for various components
-            highlight_groups = {
-                header = 'Constant',
-                icon = 'Type',
-                directory = 'Delimiter',
-                hotkey = 'Statement',
-            },
-        })
+        require('dashboard').setup({})
     end,
 }
+```
+
+# Setup
+
+The setups below show the default values, which if used will result in an empty screen.
+
+It is recommended to provide `directories` at least, and a `header` for some fun.
+
+```lua
+require('dashboard').setup({
+    -- Dashboard header
+    header = {},
+    -- Format to display date in
+    date_format = nil,
+    -- List of directory paths, or functions that return paths
+    directories = {},
+    -- Sections to add at bottom, these can be string references to
+    -- functions in sections.lua, custom strings, or custom functions
+    footer = {},
+    -- Gets called after directory is changed and is provided with the
+    -- directory string as an argument
+    on_load = function(dir)
+        -- Do nothing
+    end,
+    -- Highlight groups to use for various components
+    highlight_groups = {
+        header = 'Constant',
+        icon = 'Type',
+        directory = 'Delimiter',
+        hotkey = 'Statement',
+    },
+})
 ```
 
 # Options
@@ -64,7 +69,7 @@ By default no header is provided by the plugin. As it is just an array of string
 you can create your own or use another plugin which provides the ascii art.
 
 For example using [MaximilianLloyd/ascii.nvim](https://github.com/MaximilianLloyd/ascii.nvim)
-in `Lazy.nvim` to achieve the look in the screenshots:
+in `lazy.nvim` to achieve the look in the screenshots:
 
 ```lua
 {
@@ -151,9 +156,3 @@ used as a reference point in the development of this plugin. These plugins do ve
 different things other than sharing the concept of being a dashboard. In many ways
 `dashboard-nvim` is better and has a lot of neat features but I was looking for
 something more user defined as opposed to inferred.
-
-# Style Check
-
-```bash
-stylua --check -g '*.lua' -- .
-```

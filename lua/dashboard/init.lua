@@ -16,7 +16,7 @@ local function get_max_width(lines)
     return vim.fn.max(lengths)
 end
 
----@class ResolvedHighlight
+---@class mp.dashboard.ResolvedHighlight
 ---@field line integer
 ---@field name string
 ---@field start integer
@@ -24,7 +24,7 @@ end
 
 ---@param lines (string | table)[]
 ---@return string[]
----@return ResolvedHighlight[]
+---@return mp.dashboard.ResolvedHighlight[]
 local function center(lines)
     local max_width = get_max_width(lines)
     local center_lines = util.get_padded_table(#lines)
@@ -177,29 +177,29 @@ end
 
 local M = {}
 
----@class UserHighlightGroups
+---@class mp.dashboard.UserHighlightGroups
 ---@field public header? string
 ---@field public icon? string
 ---@field public directory? string
 ---@field public hotkey? string
 
----@class UserConfig
+---@class mp.dashboard.UserConfig
 ---@field public header? string[]
 ---@field public date_format? string
 ---@field public directories? (string | fun(): string[])[]
 ---@field public footer? (string | fun(): string?)[]
----@field public on_load? fun(string)
----@field public highlight_groups? UserHighlightGroups
+---@field public on_load? fun(dir: string)
+---@field public highlight_groups? mp.dashboard.UserHighlightGroups
 
----@param opts UserConfig|nil
+---@param opts? mp.dashboard.UserConfig
 function M.setup(opts)
-    ---@type Config
+    ---@type mp.dashboard.Config
     local default_config = {
         header = {},
         date_format = nil,
         directories = {},
         footer = {},
-        on_load = function(dir)
+        on_load = function()
             -- Do nothing
         end,
         highlight_groups = {

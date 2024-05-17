@@ -7,7 +7,7 @@ function M.version()
     return 'neovim ' .. table.concat(versions, '.')
 end
 
----@return string|nil
+---@return string?
 function M.startuptime()
     local status, lazy = pcall(require, 'lazy')
     if status then

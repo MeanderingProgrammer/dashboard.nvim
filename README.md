@@ -47,8 +47,8 @@ require('dashboard').setup({
     -- functions in sections.lua, custom strings, or custom functions
     footer = {},
     -- Gets called after directory is changed and is provided with the
-    -- directory string as an argument
-    on_load = function(dir)
+    -- directory path as an argument
+    on_load = function(path)
         -- Do nothing
     end,
     -- Highlight groups to use for various components

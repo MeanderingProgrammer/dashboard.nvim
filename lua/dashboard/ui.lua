@@ -52,6 +52,7 @@ function M.set_buffer(bufnr, dashboard)
     for _, directory in ipairs(dashboard.directories) do
         local path = vim.fs.normalize(directory.path)
         vim.keymap.set('n', directory.key, function()
+            vim.api.nvim_clear_autocmds({ group = "dashboard_open" })
             vim.cmd('lcd ' .. path)
             vim.cmd('e .')
             state.config.on_load(path)

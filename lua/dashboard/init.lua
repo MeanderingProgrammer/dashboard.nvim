@@ -39,9 +39,11 @@ function M.setup(opts)
 end
 
 function M.instance()
+    vim.api.nvim_create_augroup("dashboard_open", {clear = true})
     local bufnr = ui.create_buffer()
     ui.load(bufnr)
     vim.api.nvim_create_autocmd('VimResized', {
+        group = "dashboard_open",
         callback = function()
             ui.load(bufnr)
         end,

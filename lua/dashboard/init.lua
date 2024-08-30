@@ -42,6 +42,7 @@ function M.instance()
     local bufnr = ui.create_buffer()
     ui.load(bufnr)
     vim.api.nvim_create_autocmd('VimResized', {
+        buffer = bufnr,
         callback = function()
             ui.load(bufnr)
         end,

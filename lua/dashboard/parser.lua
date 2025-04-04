@@ -29,10 +29,10 @@ end
 function M.get_header()
     local result = {}
     for _, line in ipairs(state.config.header) do
-        table.insert(result, line)
+        result[#result + 1] = line
     end
     if state.config.date_format ~= nil then
-        table.insert(result, os.date(state.config.date_format))
+        result[#result + 1] = os.date(state.config.date_format)
     end
     return result
 end
@@ -43,11 +43,11 @@ function M.get_directories()
     local result = {}
     for _, path in ipairs(M.flatten_directories()) do
         if #result < 26 and util.is_directory(path) then
-            table.insert(result, {
+            result[#result + 1] = {
                 icon = util.get_icon(path),
                 path = path,
                 key = string.char(97 + #result),
-            })
+            }
         end
     end
     return result
@@ -59,10 +59,10 @@ function M.flatten_directories()
     local result = {}
     for _, path_or_function in ipairs(state.config.directories) do
         if type(path_or_function) == 'string' then
-            table.insert(result, path_or_function)
+            result[#result + 1] = path_or_function
         elseif type(path_or_function) == 'function' then
             for _, path in ipairs(path_or_function()) do
-                table.insert(result, path)
+                result[#result + 1] = path
             end
         end
     end
@@ -78,15 +78,15 @@ function M.get_footer()
             if sections[section] ~= nil then
                 local line = sections[section]()
                 if line ~= nil then
-                    table.insert(result, line)
+                    result[#result + 1] = line
                 end
             else
-                table.insert(result, section)
+                result[#result + 1] = section
             end
         elseif type(section) == 'function' then
             local line = section()
             if line ~= nil and type(line) == 'string' then
-                table.insert(result, line)
+                result[#result + 1] = line
             end
         else
             vim.print('Unhandled footer type: ' .. type(section))

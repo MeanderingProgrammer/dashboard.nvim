@@ -98,7 +98,7 @@ function M.add_top_padding(dashboard, lines, directory_height)
         + (directory_height * #dashboard.directories)
         + #dashboard.footer
     for _ = 1, util.padding(util.height(), height) do
-        table.insert(lines, '')
+        lines[#lines + 1] = ''
     end
 end
 
@@ -108,13 +108,13 @@ end
 ---@param line string
 function M.add_header_or_footer(lines, highlights, line)
     local padding = util.padding(util.width(), util.len(line))
-    table.insert(highlights, {
+    highlights[#highlights + 1] = {
         name = state.config.highlight_groups.header,
         row = #lines,
         start_col = padding,
         length = #line,
-    })
-    table.insert(lines, string.rep(' ', padding) .. line)
+    }
+    lines[#lines + 1] = string.rep(' ', padding) .. line
 end
 
 ---@private
@@ -123,16 +123,16 @@ end
 function M.get_width(dashboard)
     local widths = {}
     for _, header in ipairs(dashboard.header) do
-        table.insert(widths, util.len(header))
+        widths[#widths + 1] = util.len(header)
     end
     for _, directory in ipairs(dashboard.directories) do
         -- Format:<icon><space><path><space><filler><space>[<key>]
         -- Space :<icon><1    ><path><1    ><      ><1    >1<1  >1 = icon + path + 6
         local icon, path = directory.icon, directory.path
-        table.insert(widths, util.len(icon) + util.len(path) + 6)
+        widths[#widths + 1] = (util.len(icon) + util.len(path) + 6)
     end
     for _, footer in ipairs(dashboard.footer) do
-        table.insert(widths, util.len(footer))
+        widths[#widths + 1] = util.len(footer)
     end
     return vim.fn.max(widths)
 end
@@ -146,20 +146,20 @@ function M.add_directory(lines, highlights, width, directory)
     local padding = util.padding(util.width(), width)
 
     local line = directory.icon
-    table.insert(highlights, {
+    highlights[#highlights + 1] = {
         name = state.config.highlight_groups.icon,
         row = #lines,
         start_col = padding,
         length = #directory.icon,
-    })
+    }
 
     line = string.format('%s %s', line, directory.path)
-    table.insert(highlights, {
+    highlights[#highlights + 1] = {
         name = state.config.highlight_groups.directory,
         row = #lines,
         start_col = padding + #directory.icon + 1,
         length = #directory.path,
-    })
+    }
 
     line = string.format(
         '%s %s [%s]',
@@ -167,15 +167,15 @@ function M.add_directory(lines, highlights, width, directory)
         string.rep('.', width - util.len(line) - 5),
         directory.key
     )
-    table.insert(highlights, {
+    highlights[#highlights + 1] = {
         name = state.config.highlight_groups.hotkey,
         row = #lines,
         start_col = padding + #line - 3,
         length = 3,
-    })
+    }
 
-    table.insert(lines, string.rep(' ', padding) .. line)
-    table.insert(lines, '')
+    lines[#lines + 1] = string.rep(' ', padding) .. line
+    lines[#lines + 1] = ''
 end
 
 return M

@@ -1,50 +1,62 @@
-local state = require('dashboard.state')
 local ui = require('dashboard.ui')
 
 local M = {}
 
----@class mp.dashboard.UserHighlightGroups
----@field public header? string
----@field public icon? string
----@field public directory? string
----@field public hotkey? string
+---@class (exact) mp.dash.Config: mp.dash.parser.Config, mp.dash.ui.Config
 
----@class mp.dashboard.UserConfig
----@field public header? string[]
----@field public date_format? string
----@field public directories? (string | fun(): string[])[]
----@field public footer? (string | fun(): string?)[]
----@field public on_load? fun(path: string)
----@field public highlight_groups? mp.dashboard.UserHighlightGroups
+---@type mp.dash.Config
+M.default = {
+    header = {},
+    date_format = nil,
+    directories = {},
+    footer = {},
+    options = {
+        bufhidden = 'wipe',
+        buflisted = false,
+        cursorcolumn = false,
+        cursorline = false,
+        filetype = 'dashboard',
+        number = false,
+        relativenumber = false,
+        spell = false,
+        statuscolumn = '',
+        swapfile = false,
+        wrap = false,
+    },
+    on_load = function()
+        -- do nothing
+    end,
+    highlight_groups = {
+        header = 'Constant',
+        icon = 'Type',
+        directory = 'Delimiter',
+        hotkey = 'Statement',
+    },
+}
 
----@param opts? mp.dashboard.UserConfig
+---@param opts? mp.dash.UserConfig
 function M.setup(opts)
-    ---@type mp.dashboard.Config
-    local default_config = {
-        header = {},
-        date_format = nil,
-        directories = {},
-        footer = {},
-        on_load = function()
-            -- Do nothing
-        end,
-        highlight_groups = {
-            header = 'Constant',
-            icon = 'Type',
-            directory = 'Delimiter',
-            hotkey = 'Statement',
-        },
-    }
-    state.config = vim.tbl_deep_extend('force', default_config, opts or {})
+    local config = vim.tbl_deep_extend('force', M.default, opts or {})
+    require('dashboard.parser').setup({
+        header = config.header,
+        date_format = config.date_format,
+        directories = config.directories,
+        footer = config.footer,
+    })
+    require('dashboard.ui').setup({
+        options = config.options,
+        on_load = config.on_load,
+        highlight_groups = config.highlight_groups,
+    })
 end
 
 function M.instance()
-    local bufnr = ui.create_buffer()
-    ui.load(bufnr)
-    vim.api.nvim_create_autocmd('VimResized', {
-        buffer = bufnr,
+    local dash = ui.new()
+    dash:load()
+    vim.api.nvim_create_autocmd({ 'VimResized', 'WinResized' }, {
+        buffer = dash.buf,
         callback = function()
-            ui.load(bufnr)
+            dash:load()
         end,
     })
 end

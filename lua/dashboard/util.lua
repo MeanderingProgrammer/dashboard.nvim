@@ -1,11 +1,14 @@
+---@class mp.dash.Util
 local M = {}
 
----@param bufnr integer
+---@param buf integer
 ---@return boolean
-function M.is_empty(bufnr)
-    local num_lines = vim.api.nvim_buf_line_count(bufnr)
-    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-    return num_lines == 1 and lines[1] == ''
+function M.empty(buf)
+    if vim.api.nvim_buf_line_count(buf) > 1 then
+        return false
+    end
+    local line = vim.api.nvim_buf_get_lines(buf, 0, -1, false)[1]
+    return not line or #line == 0
 end
 
 ---@param s string
@@ -14,20 +17,10 @@ function M.len(s)
     return vim.fn.strdisplaywidth(s)
 end
 
----@return integer
-function M.height()
-    return vim.api.nvim_win_get_height(0)
-end
-
----@return integer
-function M.width()
-    return vim.api.nvim_win_get_width(0)
-end
-
 ---@param outer integer
 ---@param inner integer
 ---@return integer
-function M.padding(outer, inner)
+function M.center(outer, inner)
     local amount = math.floor((outer - inner) / 2)
     if amount > 0 and inner > 0 then
         return amount
@@ -45,7 +38,7 @@ end
 
 ---@param path string
 ---@return string
-function M.get_icon(path)
+function M.icon(path)
     if M.is_directory(path .. '/.git') then
         return ' '
     else

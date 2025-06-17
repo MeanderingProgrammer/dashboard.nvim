@@ -46,10 +46,24 @@ require('dashboard').setup({
     -- Sections to add at bottom, these can be string references to
     -- functions in sections.lua, custom strings, or custom functions
     footer = {},
+    -- Local options set on dashboard buffer
+    options = {
+        bufhidden = 'wipe',
+        buflisted = false,
+        cursorcolumn = false,
+        cursorline = false,
+        filetype = 'dashboard',
+        number = false,
+        relativenumber = false,
+        spell = false,
+        statuscolumn = '',
+        swapfile = false,
+        wrap = false,
+    },
     -- Gets called after directory is changed and is provided with the
     -- directory path as an argument
     on_load = function(path)
-        -- Do nothing
+        -- do nothing
     end,
     -- Highlight groups to use for various components
     highlight_groups = {

@@ -1,13 +1,20 @@
----@class mp.dashboard.HighlightGroups
----@field public header string
----@field public icon string
----@field public directory string
----@field public hotkey string
+---@meta
 
----@class mp.dashboard.Config
----@field public header string[]
----@field public date_format? string
----@field public directories (string | fun(): string[])[]
----@field public footer (string | fun(): string?)[]
----@field public on_load fun(path: string)
----@field public highlight_groups mp.dashboard.HighlightGroups
+---@class (exact) mp.dash.UserConfig: mp.dash.parser.UserConfig, mp.dash.ui.UserConfig
+
+---@class (exact) mp.dash.parser.UserConfig
+---@field header? string[]
+---@field date_format? string
+---@field directories? (string | fun(): string[])[]
+---@field footer? (string | fun(): string?)[]
+
+---@class (exact) mp.dash.ui.UserConfig
+---@field options? table<string, any>
+---@field on_load? fun(path: string)
+---@field highlight_groups? mp.dash.ui.highlight.UserConfig
+
+---@class (exact) mp.dash.ui.highlight.UserConfig
+---@field header? string
+---@field icon? string
+---@field directory? string
+---@field hotkey? string

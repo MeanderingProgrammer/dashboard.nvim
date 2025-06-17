@@ -1,51 +1,50 @@
 local sections = require('dashboard.sections')
-local state = require('dashboard.state')
 local util = require('dashboard.util')
 
----@class mp.dashboard.Directory
----@field icon string
+---@class (exact) mp.dash.parser.Config
+---@field header string[]
+---@field date_format? string
+---@field directories (string | fun(): string[])[]
+---@field footer (string | fun(): string?)[]
+
+---@class mp.dash.Value
 ---@field path string
+---@field icon string
 ---@field key string
 
----@class mp.dashboard.Dashboard
----@field header string[]
----@field directories mp.dashboard.Directory[]
----@field footer string[]
-
----@class mp.dashboard.Parser
+---@class mp.dash.Parser
+---@field private config mp.dash.parser.Config
 local M = {}
 
----@return mp.dashboard.Dashboard
-function M.parse()
-    return {
-        header = M.get_header(),
-        directories = M.get_directories(),
-        footer = M.get_footer(),
-    }
+---called from init on setup
+---@param config mp.dash.parser.Config
+function M.setup(config)
+    M.config = config
 end
 
----@private
 ---@return string[]
-function M.get_header()
-    local result = {}
-    for _, line in ipairs(state.config.header) do
+function M.header()
+    local result = {} ---@type string[]
+    for _, line in ipairs(M.config.header) do
         result[#result + 1] = line
     end
-    if state.config.date_format ~= nil then
-        result[#result + 1] = os.date(state.config.date_format)
+    if M.config.date_format then
+        local date = os.date(M.config.date_format)
+        if type(date) == 'string' then
+            result[#result + 1] = date
+        end
     end
     return result
 end
 
----@private
----@return mp.dashboard.Directory[]
-function M.get_directories()
-    local result = {}
-    for _, path in ipairs(M.flatten_directories()) do
+---@return mp.dash.Value[]
+function M.values()
+    local result = {} ---@type mp.dash.Value[]
+    for _, path in ipairs(M.paths()) do
         if #result < 26 and util.is_directory(path) then
             result[#result + 1] = {
-                icon = util.get_icon(path),
                 path = path,
+                icon = util.icon(path),
                 key = string.char(97 + #result),
             }
         end
@@ -55,13 +54,13 @@ end
 
 ---@private
 ---@return string[]
-function M.flatten_directories()
+function M.paths()
     local result = {}
-    for _, path_or_function in ipairs(state.config.directories) do
-        if type(path_or_function) == 'string' then
-            result[#result + 1] = path_or_function
-        elseif type(path_or_function) == 'function' then
-            for _, path in ipairs(path_or_function()) do
+    for _, directory in ipairs(M.config.directories) do
+        if type(directory) == 'string' then
+            result[#result + 1] = directory
+        elseif type(directory) == 'function' then
+            for _, path in ipairs(directory()) do
                 result[#result + 1] = path
             end
         end
@@ -69,27 +68,27 @@ function M.flatten_directories()
     return result
 end
 
----@private
 ---@return string[]
-function M.get_footer()
-    local result = {}
-    for _, section in ipairs(state.config.footer) do
-        if type(section) == 'string' then
-            if sections[section] ~= nil then
-                local line = sections[section]()
-                if line ~= nil then
+function M.footer()
+    local result = {} ---@type string[]
+    for _, value in ipairs(M.config.footer) do
+        if type(value) == 'string' then
+            local section = sections[value]
+            if section then
+                local line = section()
+                if line then
                     result[#result + 1] = line
                 end
             else
-                result[#result + 1] = section
+                result[#result + 1] = value
             end
-        elseif type(section) == 'function' then
-            local line = section()
-            if line ~= nil and type(line) == 'string' then
+        elseif type(value) == 'function' then
+            local line = value()
+            if type(line) == 'string' then
                 result[#result + 1] = line
             end
         else
-            vim.print('Unhandled footer type: ' .. type(section))
+            vim.print('Unhandled footer type: ' .. type(value))
         end
     end
     return result

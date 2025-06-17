@@ -1,181 +1,187 @@
 local parser = require('dashboard.parser')
-local state = require('dashboard.state')
 local util = require('dashboard.util')
 
----@class mp.dashboard.Highlight
----@field name string
----@field row integer
----@field start_col integer In bytes
----@field length integer In bytes
+---@class (exact) mp.dash.ui.Config
+---@field options table<string, any>
+---@field on_load fun(path: string)
+---@field highlight_groups mp.dash.ui.highlight.Config
 
----@class mp.dashboard.Ui
+---@class (exact) mp.dash.ui.highlight.Config
+---@field header string
+---@field icon string
+---@field directory string
+---@field hotkey string
+
+---@class mp.dash.ui.row.Hl: mp.dash.ui.col.Hl
+---@field row integer
+
+---@class mp.dash.ui.col.Hl
+---@field col integer
+---@field len integer
+---@field name string
+
+---@class mp.dash.Ui
+---@field private config mp.dash.ui.Config
 local M = {}
 
----@return integer
-function M.create_buffer()
-    local bufnr = vim.api.nvim_get_current_buf()
-    if not util.is_empty(bufnr) then
-        bufnr = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_win_set_buf(0, bufnr)
-    end
-    local local_options = {
-        ['filetype'] = 'dashboard',
-        ['number'] = false,
-        ['relativenumber'] = false,
-        ['bufhidden'] = 'wipe',
-        ['buflisted'] = false,
-        ['swapfile'] = false,
-        ['cursorline'] = false,
-        ['cursorcolumn'] = false,
-    }
-    for option, value in pairs(local_options) do
-        vim.opt_local[option] = value
-    end
-    return bufnr
+---@private
+M.ns = vim.api.nvim_create_namespace('Dashboard')
+
+---called from init on setup
+---@param config mp.dash.ui.Config
+function M.setup(config)
+    M.config = config
 end
 
----@param bufnr integer
-function M.load(bufnr)
-    vim.bo[bufnr].modifiable = true
-    M.set_buffer(bufnr, parser.parse())
-    vim.bo[bufnr].modifiable = false
-    vim.bo[bufnr].modified = false
-end
+---@class mp.dash.Width
+---@field header integer
+---@field values integer
 
----@private
-M.namespace = vim.api.nvim_create_namespace('Dashboard')
+---@class mp.dash.View
+---@field height integer
+---@field width integer
 
----@private
----@param bufnr integer
----@param dashboard mp.dashboard.Dashboard
-function M.set_buffer(bufnr, dashboard)
-    for _, directory in ipairs(dashboard.directories) do
-        local path = vim.fs.normalize(directory.path)
-        vim.keymap.set('n', directory.key, function()
+---@class mp.dash.Dash
+---@field buf integer
+---@field private header string[]
+---@field private values mp.dash.Value[]
+---@field private footer string[]
+---@field private width mp.dash.Width
+---@field private lines string[]
+---@field private hls mp.dash.ui.row.Hl[]
+---@field private win mp.dash.View
+local Dash = {}
+Dash.__index = Dash
+
+---@return mp.dash.Dash
+function Dash.new()
+    local self = setmetatable({}, Dash)
+
+    self.buf = vim.api.nvim_get_current_buf()
+    if not util.empty(self.buf) then
+        self.buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_win_set_buf(0, self.buf)
+    end
+
+    for name, value in pairs(M.config.options) do
+        vim.opt_local[name] = value
+    end
+
+    self.header = parser.header()
+    self.values = parser.values()
+    self.footer = parser.footer()
+
+    self.width = { header = 0, values = 0 }
+    for _, header in ipairs(self.header) do
+        local width = util.len(header)
+        self.width.header = math.max(self.width.header, width)
+    end
+    for _, value in ipairs(self.values) do
+        -- format: <icon><s><path><s><fill><s>[<key>]
+        -- space : <icon><1><path><1><    ><1>1<1  >1
+        --       : icon + path + 6
+        local icon, path = value.icon, value.path
+        local width = util.len(icon) + util.len(path) + 6
+        self.width.values = math.max(self.width.values, width)
+    end
+
+    for _, value in ipairs(self.values) do
+        local path = vim.fs.normalize(value.path)
+        vim.keymap.set('n', value.key, function()
             vim.cmd('lcd ' .. path)
             vim.cmd('e .')
-            state.config.on_load(path)
-        end, { buffer = true })
+            M.config.on_load(path)
+        end, { buffer = self.buf })
     end
 
-    local lines, highlights = M.render_data(dashboard)
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-    for _, hl in ipairs(highlights) do
-        vim.api.nvim_buf_set_extmark(bufnr, M.namespace, hl.row, hl.start_col, {
-            end_col = hl.start_col + hl.length,
+    return self
+end
+
+function Dash:load()
+    vim.bo[self.buf].modifiable = true
+
+    self.lines = {}
+    self.hls = {}
+    self.win = {
+        height = vim.api.nvim_win_get_height(0),
+        width = vim.api.nvim_win_get_width(0),
+    }
+    self:populate()
+    vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, self.lines)
+    for _, hl in ipairs(self.hls) do
+        vim.api.nvim_buf_set_extmark(self.buf, M.ns, hl.row, hl.col, {
+            end_col = hl.col + hl.len,
             hl_group = hl.name,
         })
     end
+
+    vim.bo[self.buf].modifiable = false
+    vim.bo[self.buf].modified = false
 end
 
 ---@private
----@param dashboard mp.dashboard.Dashboard
----@return string[]
----@return mp.dashboard.Highlight[]
-function M.render_data(dashboard)
-    local lines = {}
-    local highlights = {}
-    M.add_top_padding(dashboard, lines, 2)
-    for _, header in ipairs(dashboard.header) do
-        M.add_header_or_footer(lines, highlights, header)
-    end
-    local width = M.get_width(dashboard)
-    for _, directory in ipairs(dashboard.directories) do
-        M.add_directory(lines, highlights, width, directory)
-    end
-    for _, footer in ipairs(dashboard.footer) do
-        M.add_header_or_footer(lines, highlights, footer)
-    end
-    return lines, highlights
-end
+function Dash:populate()
+    local height = #self.header + (2 * #self.values) + #self.footer
 
----@private
----@param dashboard mp.dashboard.Dashboard
----@param lines string[]
----@param directory_height integer
-function M.add_top_padding(dashboard, lines, directory_height)
-    local height = #dashboard.header
-        + (directory_height * #dashboard.directories)
-        + #dashboard.footer
-    for _ = 1, util.padding(util.height(), height) do
-        lines[#lines + 1] = ''
+    for _ = 1, util.center(self.win.height, height) do
+        self.lines[#self.lines + 1] = ''
+    end
+    for _, header in ipairs(self.header) do
+        self:line(header)
+    end
+    for _, value in ipairs(self.values) do
+        self:value(value)
+        self.lines[#self.lines + 1] = ''
+    end
+    for _, footer in ipairs(self.footer) do
+        self:line(footer)
     end
 end
 
 ---@private
----@param lines string[]
----@param highlights mp.dashboard.Highlight[]
 ---@param line string
-function M.add_header_or_footer(lines, highlights, line)
-    local padding = util.padding(util.width(), util.len(line))
-    highlights[#highlights + 1] = {
-        name = state.config.highlight_groups.header,
-        row = #lines,
-        start_col = padding,
-        length = #line,
-    }
-    lines[#lines + 1] = string.rep(' ', padding) .. line
+function Dash:line(line)
+    local groups = M.config.highlight_groups
+    self:center(line, {
+        { col = 0, len = #line, name = groups.header },
+    })
 end
 
 ---@private
----@param dashboard mp.dashboard.Dashboard
----@return integer
-function M.get_width(dashboard)
-    local widths = {}
-    for _, header in ipairs(dashboard.header) do
-        widths[#widths + 1] = util.len(header)
-    end
-    for _, directory in ipairs(dashboard.directories) do
-        -- Format:<icon><space><path><space><filler><space>[<key>]
-        -- Space :<icon><1    ><path><1    ><      ><1    >1<1  >1 = icon + path + 6
-        local icon, path = directory.icon, directory.path
-        widths[#widths + 1] = (util.len(icon) + util.len(path) + 6)
-    end
-    for _, footer in ipairs(dashboard.footer) do
-        widths[#widths + 1] = util.len(footer)
-    end
-    return vim.fn.max(widths)
-end
+---@param value mp.dash.Value
+function Dash:value(value)
+    local limit = math.min(self.win.width, self.width.header)
+    local width = math.max(self.width.values, limit)
 
----@private
----@param lines string[]
----@param highlights mp.dashboard.Highlight[]
----@param width integer
----@param directory mp.dashboard.Directory
-function M.add_directory(lines, highlights, width, directory)
-    local padding = util.padding(util.width(), width)
-
-    local line = directory.icon
-    highlights[#highlights + 1] = {
-        name = state.config.highlight_groups.icon,
-        row = #lines,
-        start_col = padding,
-        length = #directory.icon,
-    }
-
-    line = string.format('%s %s', line, directory.path)
-    highlights[#highlights + 1] = {
-        name = state.config.highlight_groups.directory,
-        row = #lines,
-        start_col = padding + #directory.icon + 1,
-        length = #directory.path,
-    }
-
-    line = string.format(
-        '%s %s [%s]',
-        line,
-        string.rep('.', width - util.len(line) - 5),
-        directory.key
+    local l = ('%s %s'):format(value.icon, value.path)
+    local r = ('[%s]'):format(value.key)
+    local line = ('%s %s %s'):format(
+        l,
+        ('.'):rep(width - util.len(l) - util.len(r) - 2),
+        r
     )
-    highlights[#highlights + 1] = {
-        name = state.config.highlight_groups.hotkey,
-        row = #lines,
-        start_col = padding + #line - 3,
-        length = 3,
-    }
-
-    lines[#lines + 1] = string.rep(' ', padding) .. line
-    lines[#lines + 1] = ''
+    local groups = M.config.highlight_groups
+    self:center(line, {
+        { col = 0, len = #value.icon, name = groups.icon },
+        { col = #value.icon + 1, len = #value.path, name = groups.directory },
+        { col = #line - #r, len = #r, name = groups.hotkey },
+    })
 end
+
+---@private
+---@param line string
+---@param hls mp.dash.ui.col.Hl[]
+function Dash:center(line, hls)
+    local padding = util.center(self.win.width, util.len(line))
+    for _, hl in ipairs(hls) do
+        ---@cast hl mp.dash.ui.row.Hl
+        hl.row = #self.lines
+        hl.col = hl.col + padding
+        self.hls[#self.hls + 1] = hl
+    end
+    self.lines[#self.lines + 1] = (' '):rep(padding) .. line
+end
+
+M.new = Dash.new
 
 return M

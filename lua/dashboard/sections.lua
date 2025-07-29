@@ -2,7 +2,7 @@ local M = {}
 
 ---@return string
 function M.version()
-    local version = vim.version()
+    local version = vim.version() ---@type vim.Version
     local versions = { version.major, version.minor, version.patch }
     return 'neovim ' .. table.concat(versions, '.')
 end

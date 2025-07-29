@@ -55,7 +55,7 @@ end
 ---@private
 ---@return string[]
 function M.paths()
-    local result = {}
+    local result = {} ---@type string[]
     for _, directory in ipairs(M.config.directories) do
         if type(directory) == 'string' then
             result[#result + 1] = directory
@@ -73,7 +73,7 @@ function M.footer()
     local result = {} ---@type string[]
     for _, value in ipairs(M.config.footer) do
         if type(value) == 'string' then
-            local section = sections[value]
+            local section = sections[value] ---@type fun(): string?
             if section then
                 local line = section()
                 if line then

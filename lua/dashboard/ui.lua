@@ -13,13 +13,16 @@ local util = require('dashboard.util')
 ---@field directory string
 ---@field hotkey string
 
----@class mp.dash.ui.row.Hl: mp.dash.ui.col.Hl
+---@class mp.dash.Hl
 ---@field row integer
-
----@class mp.dash.ui.col.Hl
 ---@field col integer
 ---@field len integer
 ---@field name string
+
+---@class mp.dash.hl.Partial
+---@field [1] integer col
+---@field [2] integer len
+---@field [3] string name
 
 ---@class mp.dash.Ui
 ---@field private config mp.dash.ui.Config
@@ -50,7 +53,7 @@ end
 ---@field private footer string[]
 ---@field private width mp.dash.Width
 ---@field private lines string[]
----@field private hls mp.dash.ui.row.Hl[]
+---@field private hls mp.dash.Hl[]
 ---@field private view mp.dash.View
 local Dash = {}
 Dash.__index = Dash
@@ -92,8 +95,7 @@ function Dash.new()
         -- format: <icon><s><path><s><fill><s>[<key>]
         -- space : <icon><1><path><1><    ><1>1<1  >1
         --       : icon + path + 6
-        local icon, path = value.icon, value.path
-        local width = util.len(icon) + util.len(path) + 6
+        local width = util.len(value.icon) + util.len(value.path) + 6
         self.width.values = math.max(self.width.values, width)
     end
 
@@ -155,7 +157,7 @@ end
 function Dash:line(line)
     local groups = M.config.highlight_groups
     self:center(line, {
-        { col = 0, len = #line, name = groups.header },
+        { 0, #line, groups.header },
     })
 end
 
@@ -165,31 +167,31 @@ function Dash:value(value)
     local limit = math.min(self.view.width, self.width.header)
     local width = math.max(self.width.values, limit)
 
-    local l = ('%s %s'):format(value.icon, value.path)
-    local r = ('[%s]'):format(value.key)
-    local line = ('%s %s %s'):format(
-        l,
-        ('.'):rep(width - util.len(l) - util.len(r) - 2),
-        r
-    )
+    local left = ('%s %s'):format(value.icon, value.path)
+    local right = ('[%s]'):format(value.key)
+    local fill = width - util.len(left) - util.len(right) - 2
+    local line = ('%s %s %s'):format(left, ('.'):rep(fill), right)
+
     local groups = M.config.highlight_groups
     self:center(line, {
-        { col = 0, len = #value.icon, name = groups.icon },
-        { col = #value.icon + 1, len = #value.path, name = groups.directory },
-        { col = #line - #r, len = #r, name = groups.hotkey },
+        { 0, #value.icon, groups.icon },
+        { #value.icon + 1, #value.path, groups.directory },
+        { #line - #right, #right, groups.hotkey },
     })
 end
 
 ---@private
 ---@param line string
----@param hls mp.dash.ui.col.Hl[]
-function Dash:center(line, hls)
+---@param partials mp.dash.hl.Partial[]
+function Dash:center(line, partials)
     local padding = util.center(self.view.width, util.len(line))
-    for _, hl in ipairs(hls) do
-        ---@cast hl mp.dash.ui.row.Hl
-        hl.row = #self.lines
-        hl.col = hl.col + padding
-        self.hls[#self.hls + 1] = hl
+    for _, partial in ipairs(partials) do
+        self.hls[#self.hls + 1] = {
+            row = #self.lines,
+            col = partial[1] + padding,
+            len = partial[2],
+            name = partial[3],
+        }
     end
     self.lines[#self.lines + 1] = (' '):rep(padding) .. line
 end

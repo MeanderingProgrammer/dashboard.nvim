@@ -2,7 +2,8 @@ local parser = require('dashboard.parser')
 local util = require('dashboard.util')
 
 ---@class (exact) mp.dash.ui.Config
----@field options table<string, any>
+---@field bo table<string, any>
+---@field wo table<string, any>
 ---@field on_load fun(path: string)
 ---@field highlight_groups mp.dash.ui.highlight.Config
 
@@ -43,13 +44,14 @@ end
 
 ---@class mp.dash.Dash
 ---@field buf integer
+---@field win integer
 ---@field private header string[]
 ---@field private values mp.dash.Value[]
 ---@field private footer string[]
 ---@field private width mp.dash.Width
 ---@field private lines string[]
 ---@field private hls mp.dash.ui.row.Hl[]
----@field private win mp.dash.View
+---@field private view mp.dash.View
 local Dash = {}
 Dash.__index = Dash
 
@@ -58,13 +60,23 @@ function Dash.new()
     local self = setmetatable({}, Dash)
 
     self.buf = vim.api.nvim_get_current_buf()
+    self.win = vim.api.nvim_get_current_win()
     if not util.empty(self.buf) then
         self.buf = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_win_set_buf(0, self.buf)
+        vim.api.nvim_win_set_buf(self.win, self.buf)
     end
 
-    for name, value in pairs(M.config.options) do
-        vim.opt_local[name] = value
+    for name, value in pairs(M.config.bo) do
+        vim.api.nvim_set_option_value(name, value, {
+            scope = 'local',
+            buf = self.buf,
+        })
+    end
+    for name, value in pairs(M.config.wo) do
+        vim.api.nvim_set_option_value(name, value, {
+            scope = 'local',
+            win = self.win,
+        })
     end
 
     self.header = parser.header()
@@ -102,9 +114,9 @@ function Dash:load()
 
     self.lines = {}
     self.hls = {}
-    self.win = {
-        height = vim.api.nvim_win_get_height(0),
-        width = vim.api.nvim_win_get_width(0),
+    self.view = {
+        height = vim.api.nvim_win_get_height(self.win),
+        width = vim.api.nvim_win_get_width(self.win),
     }
     self:populate()
     vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, self.lines)
@@ -123,7 +135,7 @@ end
 function Dash:populate()
     local height = #self.header + (2 * #self.values) + #self.footer
 
-    for _ = 1, util.center(self.win.height, height) do
+    for _ = 1, util.center(self.view.height, height) do
         self.lines[#self.lines + 1] = ''
     end
     for _, header in ipairs(self.header) do
@@ -150,7 +162,7 @@ end
 ---@private
 ---@param value mp.dash.Value
 function Dash:value(value)
-    local limit = math.min(self.win.width, self.width.header)
+    local limit = math.min(self.view.width, self.width.header)
     local width = math.max(self.width.values, limit)
 
     local l = ('%s %s'):format(value.icon, value.path)
@@ -172,7 +184,7 @@ end
 ---@param line string
 ---@param hls mp.dash.ui.col.Hl[]
 function Dash:center(line, hls)
-    local padding = util.center(self.win.width, util.len(line))
+    local padding = util.center(self.view.width, util.len(line))
     for _, hl in ipairs(hls) do
         ---@cast hl mp.dash.ui.row.Hl
         hl.row = #self.lines

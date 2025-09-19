@@ -37,6 +37,8 @@ It is recommended to provide `directories` at least, and a `header` for some fun
 
 ```lua
 require('dashboard').setup({
+    -- Sequence that determines keymaps
+    autokeys = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
     -- Dashboard header
     header = {},
     -- Format to display date in
@@ -46,18 +48,21 @@ require('dashboard').setup({
     -- Sections to add at bottom, these can be string references to
     -- functions in sections.lua, custom strings, or custom functions
     footer = {},
-    -- Local options set on dashboard buffer
-    options = {
+    -- Buffer local options
+    bo = {
         bufhidden = 'wipe',
         buflisted = false,
+        filetype = 'dashboard',
+        swapfile = false,
+    },
+    -- Window local options
+    wo = {
         cursorcolumn = false,
         cursorline = false,
-        filetype = 'dashboard',
         number = false,
         relativenumber = false,
         spell = false,
         statuscolumn = '',
-        swapfile = false,
         wrap = false,
     },
     -- Gets called after directory is changed and is provided with the

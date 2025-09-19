@@ -2,6 +2,7 @@ local sections = require('dashboard.sections')
 local util = require('dashboard.util')
 
 ---@class (exact) mp.dash.parser.Config
+---@field autokeys string
 ---@field header string[]
 ---@field date_format? string
 ---@field directories (string | fun(): string[])[]
@@ -40,12 +41,13 @@ end
 ---@return mp.dash.Value[]
 function M.values()
     local result = {} ---@type mp.dash.Value[]
+    local autokeys = M.config.autokeys
     for _, path in ipairs(M.paths()) do
-        if #result < 26 and util.is_directory(path) then
+        if #result < #autokeys and util.is_directory(path) then
             result[#result + 1] = {
                 path = path,
                 icon = util.icon(path),
-                key = string.char(97 + #result),
+                key = autokeys:sub(#result + 1, #result + 1),
             }
         end
     end

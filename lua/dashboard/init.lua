@@ -6,21 +6,24 @@ local M = {}
 
 ---@type mp.dash.Config
 M.default = {
+    autokeys = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890',
     header = {},
     date_format = nil,
     directories = {},
     footer = {},
-    options = {
+    bo = {
         bufhidden = 'wipe',
         buflisted = false,
+        filetype = 'dashboard',
+        swapfile = false,
+    },
+    wo = {
         cursorcolumn = false,
         cursorline = false,
-        filetype = 'dashboard',
         number = false,
         relativenumber = false,
         spell = false,
         statuscolumn = '',
-        swapfile = false,
         wrap = false,
     },
     on_load = function()
@@ -38,13 +41,15 @@ M.default = {
 function M.setup(opts)
     local config = vim.tbl_deep_extend('force', M.default, opts or {})
     require('dashboard.parser').setup({
+        autokeys = config.autokeys,
         header = config.header,
         date_format = config.date_format,
         directories = config.directories,
         footer = config.footer,
     })
     require('dashboard.ui').setup({
-        options = config.options,
+        bo = config.bo,
+        wo = config.wo,
         on_load = config.on_load,
         highlight_groups = config.highlight_groups,
     })

@@ -17,6 +17,15 @@ Neovim dashboard plugin
 
 # Install
 
+## vim.pack
+
+```lua
+vim.pack.add({
+    'https://github.com/MeanderingProgrammer/dashboard.nvim',
+})
+require('dashboard').setup({})
+```
+
 ## lazy.nvim
 
 ```lua

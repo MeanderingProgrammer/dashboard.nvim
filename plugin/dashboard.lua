@@ -1,3 +1,8 @@
+if vim.g.loaded_dashboard then
+    return
+end
+vim.g.loaded_dashboard = true
+
 vim.api.nvim_create_autocmd('UIEnter', {
     group = vim.api.nvim_create_augroup('Dashboard', {}),
     callback = function()
